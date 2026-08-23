@@ -10,9 +10,12 @@ import SwiftData
 
 @main
 struct SlipEasyApp: App {
+    @Environment(\.scenePhase) private var scenePhase
+    @State private var hasTrackedColdStart = false
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            Item.self,
+            CravingLog.self,
         ])
         let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
 
@@ -23,10 +26,22 @@ struct SlipEasyApp: App {
         }
     }()
 
+    init() {
+        // Must happen here, not in an onAppear — TelemetryDeck needs to be
+        // ready before the first view renders.
+        Analytics.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            RootView()
         }
         .modelContainer(sharedModelContainer)
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                Analytics.trackAppOpened(isColdStart: !hasTrackedColdStart)
+                hasTrackedColdStart = true
+            }
+        }
     }
 }
