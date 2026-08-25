@@ -55,14 +55,15 @@ enum Analytics {
         trackDayNActiveIfNeeded(now: now, defaults: defaults)
     }
 
-    static func trackInterventionStarted() {
-        track("intervention_started")
+    static func trackInterventionStarted(toolType: String) {
+        track("intervention_started", ["tool_type": toolType])
     }
 
-    static func trackInterventionCompleted(durationSec: Int, exitedEarly: Bool) {
+    static func trackInterventionCompleted(durationSec: Int, exitedEarly: Bool, toolType: String) {
         track("intervention_completed", [
             "duration_sec": String(durationSec),
-            "exited_early": String(exitedEarly)
+            "exited_early": String(exitedEarly),
+            "tool_type": toolType
         ])
     }
 

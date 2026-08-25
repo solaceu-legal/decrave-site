@@ -6,7 +6,11 @@
 import Foundation
 
 enum AppRoute: Hashable {
-    case intervention
+    case toolPicker
+    case intervention(tool: InterventionTool)
     case log(outcome: CravingOutcome)
     case relapseConfirmation
+    case weeklyReport
+    case settings
+    case dataExport
 }

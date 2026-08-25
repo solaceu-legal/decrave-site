@@ -6,19 +6,16 @@
 import SwiftUI
 import Combine
 
-/// Urge Surfing — the only intervention tool in v0.1.
+/// Runs either intervention tool (Urge Surfing or 4-7-8 Breathing) — the
+/// phase list is the only thing that differs between them, so both share
+/// this exact timer/progress mechanism.
 /// Timing is wall-clock based (elapsed = now - phaseStart) so it stays
 /// correct after the app is backgrounded or the screen locks.
 struct InterventionView: View {
+    let tool: InterventionTool
     @Binding var path: [AppRoute]
 
-    private let phaseDurations: [Double] = [20, 40, 60, 60]
-    private let phasePrompts = [
-        Strings.Intervention.phase1Prompt,
-        Strings.Intervention.phase2Prompt,
-        Strings.Intervention.phase3Prompt,
-        Strings.Intervention.phase4Prompt
-    ]
+    private var phases: [InterventionPhase] { tool.phases }
 
     @State private var phaseIndex = 0
     @State private var phaseStart = Date()
@@ -30,7 +27,22 @@ struct InterventionView: View {
     // outright the moment the last phase ends — otherwise it keeps
     // ticking forever while the end screen sits on top, re-triggering
     // completion every 0.2s for as long as the user lingers there.
-    private let timerPublisher = Timer.publish(every: 0.2, on: .main, in: .common)
+    //
+    // Must be @State, not a plain `let`: InterventionView is a struct, so
+    // SwiftUI reconstructs it (and re-runs every plain property
+    // initializer) on nearly every body re-evaluation. A plain `let` here
+    // would hand out a fresh, never-connected Timer.publish() instance on
+    // each of those re-evaluations, while .connect() in onAppear only
+    // ever ran once, on the very first instance. .onReceive would then be
+    // listening to a different, uninitialized publisher than the one that
+    // got connected — ticks silently go nowhere and the progress bar
+    // never moves. This happened to surface right after a fresh install,
+    // when CloudKit's initial export burst was triggering enough @Query
+    // updates elsewhere to force extra re-evaluations right after
+    // onAppear. @State's initializer only ever runs once per view
+    // identity, so the same publisher instance is reused across every
+    // re-evaluation and always matches what got connected.
+    @State private var timerPublisher = Timer.publish(every: 0.2, on: .main, in: .common)
     @State private var timerConnection: Cancellable?
 
     var body: some View {
@@ -46,7 +58,7 @@ struct InterventionView: View {
         .onAppear {
             sessionStart = Date()
             phaseStart = Date()
-            Analytics.trackInterventionStarted()
+            Analytics.trackInterventionStarted(toolType: tool.rawValue)
             timerConnection = timerPublisher.connect()
         }
         .onDisappear {
@@ -72,7 +84,7 @@ struct InterventionView: View {
 
                 Spacer()
 
-                Text(phasePrompts[phaseIndex])
+                Text(phases[phaseIndex].prompt)
                     .font(.title2)
                     .foregroundStyle(.white)
                     .multilineTextAlignment(.center)
@@ -93,7 +105,7 @@ struct InterventionView: View {
     /// hits zero, which is exactly the promise this exercise doesn't make.
     private var phaseProgressIndicator: some View {
         HStack(spacing: 6) {
-            ForEach(phaseDurations.indices, id: \.self) { index in
+            ForEach(phases.indices, id: \.self) { index in
                 segmentBar(fraction: segmentFraction(for: index))
             }
         }
@@ -103,7 +115,7 @@ struct InterventionView: View {
     private func segmentFraction(for index: Int) -> CGFloat {
         if index < phaseIndex { return 1 }
         if index > phaseIndex { return 0 }
-        return CGFloat(min(elapsedInPhase / phaseDurations[index], 1))
+        return CGFloat(min(elapsedInPhase / phases[index].duration, 1))
     }
 
     private func segmentBar(fraction: CGFloat) -> some View {
@@ -121,13 +133,13 @@ struct InterventionView: View {
     private func tick() {
         guard !isFinished else { return }
         elapsedInPhase = Date().timeIntervalSince(phaseStart)
-        if elapsedInPhase >= phaseDurations[phaseIndex] {
+        if elapsedInPhase >= phases[phaseIndex].duration {
             advancePhase()
         }
     }
 
     private func advancePhase() {
-        if phaseIndex < phaseDurations.count - 1 {
+        if phaseIndex < phases.count - 1 {
             phaseIndex += 1
             phaseStart = Date()
             elapsedInPhase = 0
@@ -136,21 +148,21 @@ struct InterventionView: View {
         }
     }
 
-    /// Fires the moment the last phase ends (180s) — the only place
+    /// Fires the moment the last phase ends — the only place
     /// intervention_completed(exitedEarly: false) is sent. The timer is
     /// stopped here first so no further tick can ever call this again,
     /// no matter how long the user lingers on the end screen after.
     private func complete() {
         stopTimer()
         let duration = Int(Date().timeIntervalSince(sessionStart))
-        Analytics.trackInterventionCompleted(durationSec: duration, exitedEarly: false)
+        Analytics.trackInterventionCompleted(durationSec: duration, exitedEarly: false, toolType: tool.rawValue)
         isFinished = true
     }
 
     private func exitEarly() {
         stopTimer()
         let duration = Int(Date().timeIntervalSince(sessionStart))
-        Analytics.trackInterventionCompleted(durationSec: duration, exitedEarly: true)
+        Analytics.trackInterventionCompleted(durationSec: duration, exitedEarly: true, toolType: tool.rawValue)
         path.removeAll()
     }
 
@@ -162,6 +174,6 @@ struct InterventionView: View {
 
 #Preview {
     NavigationStack {
-        InterventionView(path: .constant([]))
+        InterventionView(tool: .urgeSurfing, path: .constant([]))
     }
 }
