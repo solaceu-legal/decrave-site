@@ -112,6 +112,10 @@ struct WeeklyReportView: View {
                     insightsSection
                 }
 
+                ProLockedSection(unlockLabel: Strings.Report.unlockPeakHoursCTA) {
+                    peakHoursSection
+                }
+
                 ProLockedSection(unlockLabel: Strings.Report.unlockRadarCTA) {
                     triggerRadarDetail
                 }
@@ -202,6 +206,24 @@ struct WeeklyReportView: View {
                 }
             }
         }
+    }
+
+    @ViewBuilder
+    private var peakHoursSection: some View {
+        // All-time, not weekLogs — same reasoning as `prediction` below:
+        // an hour-of-day pattern needs more than a week to mean anything.
+        let chart = PeakHoursChart(logs: allLogs)
+        VStack(alignment: .leading, spacing: 8) {
+            Text(Strings.Report.peakHoursTitle)
+                .font(.headline)
+            chart
+            if let peakHour = chart.peakHourLabel {
+                Text(Strings.Report.peakHoursCaption(peakHour))
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     @ViewBuilder

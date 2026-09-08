@@ -20,7 +20,13 @@ enum Milestones {
         Milestone(threshold: 10, icon: "flame.fill", label: "10 beaten"),
         Milestone(threshold: 25, icon: "bolt.fill", label: "25 beaten"),
         Milestone(threshold: 50, icon: "star.fill", label: "50 beaten"),
-        Milestone(threshold: 100, icon: "crown.fill", label: "100 beaten")
+        Milestone(threshold: 100, icon: "crown.fill", label: "100 beaten"),
+        Milestone(threshold: 200, icon: "rosette", label: "200 beaten"),
+        Milestone(threshold: 500, icon: "medal.fill", label: "500 beaten"),
+        Milestone(threshold: 1000, icon: "trophy.fill", label: "1,000 beaten"),
+        Milestone(threshold: 2000, icon: "shield.fill", label: "2,000 beaten"),
+        Milestone(threshold: 5000, icon: "sparkles", label: "5,000 beaten"),
+        Milestone(threshold: 10000, icon: "infinity", label: "10,000 beaten")
     ]
 }
 

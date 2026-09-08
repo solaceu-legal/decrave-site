@@ -241,11 +241,17 @@ enum Strings {
         static let unlockCTA = "See plans"
 
         // Section-level locks (see ProLockedSection) — the two deeper,
-        // predictive layers stay Pro; Craving intensity / Top triggers /
-        // Money trajectory below are free, matching Decrave's own free/Pro
-        // boundary.
+        // predictive layers plus peak hours stay Pro; Craving intensity /
+        // Top triggers / Money trajectory above are free, matching
+        // Decrave's own free/Pro boundary.
         static let unlockInsightsCTA = "Unlock deep insights"
         static let unlockRadarCTA = "Unlock Trigger Radar"
+        static let unlockPeakHoursCTA = "Unlock peak hours"
+
+        static let peakHoursTitle = "When cravings hit hardest"
+        static func peakHoursCaption(_ hour: String) -> String {
+            "Most cravings hit around \(hour)."
+        }
 
         static let triggerRadarDetailTitle = "Trigger Radar"
         static func triggerRadarDetailBody(occurrences: Int) -> String {
