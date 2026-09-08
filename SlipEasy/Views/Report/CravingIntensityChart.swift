@@ -2,10 +2,14 @@
 //  CravingIntensityChart.swift
 //  SlipEasy
 //
-//  Same rolling-7-day bucketing as WeeklyBarsView (Home), but charts
-//  average intensity (1...5, from CravingLog.intensity) instead of a
-//  count. The day(s) tied for the week's highest average are
-//  highlighted, mirroring Decrave's "hot" bar treatment.
+//  Unlike WeeklyBarsView's rolling 7-day window, this charts a fixed
+//  Monday-through-Sunday calendar week (regardless of the device
+//  locale's own firstWeekday) — average intensity (1...5, from
+//  CravingLog.intensity) instead of a count. The day(s) tied for the
+//  week's highest average are highlighted, mirroring Decrave's "hot"
+//  bar treatment. Takes the unfiltered log set (not a pre-windowed
+//  one) since it does its own date bucketing, the same way
+//  WeeklyBarsView takes all of Home's beatenLogs.
 //
 
 import SwiftUI
@@ -22,13 +26,21 @@ struct CravingIntensityChart: View {
     private var dailyIntensities: [DayIntensity] {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
+        // .weekday is always 1 = Sunday ... 7 = Saturday in the Gregorian
+        // calendar, independent of the locale's firstWeekday setting —
+        // this maps it to "days since Monday" so the week starts on
+        // Monday everywhere, not just in locales where that's the default.
+        let weekday = calendar.component(.weekday, from: today)
+        let daysSinceMonday = (weekday + 5) % 7
+        guard let monday = calendar.date(byAdding: .day, value: -daysSinceMonday, to: today) else { return [] }
+
         let formatter = DateFormatter()
         formatter.setLocalizedDateFormatFromTemplate("EEEEE") // narrow weekday initial: M, T, W...
-        return (0..<7).reversed().enumerated().compactMap { index, offset in
-            guard let day = calendar.date(byAdding: .day, value: -offset, to: today) else { return nil }
+        return (0..<7).compactMap { offset in
+            guard let day = calendar.date(byAdding: .day, value: offset, to: monday) else { return nil }
             let dayLogs = logs.filter { calendar.isDate($0.timestamp, inSameDayAs: day) }
             let average = dayLogs.isEmpty ? 0 : Double(dayLogs.reduce(0) { $0 + $1.intensity }) / Double(dayLogs.count)
-            return DayIntensity(id: index, weekdayLabel: formatter.string(from: day), averageIntensity: average)
+            return DayIntensity(id: offset, weekdayLabel: formatter.string(from: day), averageIntensity: average)
         }
     }
 

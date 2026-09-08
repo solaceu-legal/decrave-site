@@ -156,7 +156,10 @@ struct WeeklyReportView: View {
         VStack(alignment: .leading, spacing: 12) {
             Text(Strings.Report.cravingIntensityTitle)
                 .font(.headline)
-            CravingIntensityChart(logs: weekLogs)
+            // allLogs, not weekLogs — the chart buckets by a fixed
+            // Monday–Sunday calendar week itself; weekLogs' rolling
+            // window would cut off or misattribute days once relabeled.
+            CravingIntensityChart(logs: allLogs)
             // Reuses the same all-time weekday+hour prediction as Trigger
             // Radar rather than computing a separate multi-day range —
             // one honest pattern, not two slightly different ones.

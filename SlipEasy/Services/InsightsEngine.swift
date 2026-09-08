@@ -91,15 +91,29 @@ enum InsightsEngine {
         return TriggerToolInsight(trigger: topTrigger, attemptCount: matching.count, beatenCount: beaten)
     }
 
-    // A simplified heuristic, not a validated psychological score — mirrors
-    // Decrave's cited "a slip costs ~7 points" framing without claiming
-    // clinical precision. Starts at a neutral midpoint so a brand-new
-    // account doesn't read as already damaged; beating cravings nudges it
-    // up (diminishing as it approaches 100), a smoked log costs a flat 7.
+    // A simplified heuristic, not a validated psychological score. Starts
+    // at a neutral midpoint so a brand-new account doesn't read as already
+    // damaged. Beating cravings is uncapped and linear — every win is
+    // worth momentumGainPerBeaten, no matter how many came before, so the
+    // number shown at the moment of a win (see Strings.Log.victorySubtitle)
+    // is always exactly true. Smoking's *lifetime total* cost is capped at
+    // momentumMaxLossFromSmoking: a previous version subtracted 7 per
+    // smoked log with no cap, which could (and for anyone with enough
+    // logged relapses, did) hit a hard floor of 0 — directly contradicting
+    // the Never-Reset Promise's "momentum bends, never breaks... zero is
+    // impossible" (see Strings.Settings.promisePoint2Body). With the cap,
+    // no history of relapses can push momentum below momentumFloor, and
+    // recovery is predictable: momentumMaxLossFromSmoking /
+    // momentumGainPerBeaten beaten cravings always earns all the way back
+    // to neutral, regardless of how many relapses came before.
+    private static let momentumBaseline = 50
+    static let momentumFloor = 20
+    private static let momentumMaxLossFromSmoking = momentumBaseline - momentumFloor
+
     static func momentumScore(beatenCount: Int, smokedCount: Int) -> Int {
-        let gained = beatenCount * 3
-        let lost = smokedCount * 7
-        return max(0, min(100, 50 + gained - lost))
+        let lost = min(smokedCount * 7, momentumMaxLossFromSmoking)
+        let gained = beatenCount * momentumGainPerBeaten
+        return min(100, momentumBaseline - lost + gained)
     }
 
     /// Points earned toward momentum for a single beaten craving — shown

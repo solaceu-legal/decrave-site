@@ -28,10 +28,19 @@ struct TopTriggersRows: View {
 
     private func row(for item: InsightsEngine.TriggerBreakdown) -> some View {
         HStack(spacing: 12) {
-            Label(item.trigger.label, systemImage: item.trigger.iconName)
-                .font(.subheadline.weight(.semibold))
-                .lineLimit(1)
-                .frame(width: 110, alignment: .leading)
+            // A fixed-width icon slot, not Label's own intrinsic sizing —
+            // SF Symbols vary in glyph width (wineglass vs. fork.knife vs.
+            // zzz), so without it the label text starts at a different x
+            // per row instead of lining up in a column.
+            HStack(spacing: 8) {
+                Image(systemName: item.trigger.iconName)
+                    .font(.subheadline)
+                    .frame(width: 20)
+                Text(item.trigger.label)
+                    .font(.subheadline.weight(.semibold))
+                    .lineLimit(1)
+            }
+            .frame(width: 110, alignment: .leading)
 
             GeometryReader { geometry in
                 ZStack(alignment: .leading) {
