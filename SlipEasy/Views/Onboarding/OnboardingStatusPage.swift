@@ -41,8 +41,7 @@ struct OnboardingStatusPage: View {
                                     .multilineTextAlignment(.leading)
                                     .frame(maxWidth: .infinity, alignment: .leading)
                                     .padding()
-                                    .background(Color(.secondarySystemBackground))
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                    .cardStyle()
                             }
                             .buttonStyle(.plain)
                             .foregroundStyle(Color.primary)

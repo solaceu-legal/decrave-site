@@ -33,6 +33,18 @@ enum CravingTrigger: String, CaseIterable, Identifiable {
         case .other: return "Other"
         }
     }
+
+    var iconName: String {
+        switch self {
+        case .coffee: return "cup.and.saucer.fill"
+        case .meal: return "fork.knife"
+        case .stress: return "bolt.fill"
+        case .alcohol: return "wineglass.fill"
+        case .breakTime: return "clock.fill"
+        case .boredom: return "zzz"
+        case .other: return "ellipsis.circle.fill"
+        }
+    }
 }
 
 @Model
@@ -42,6 +54,9 @@ final class CravingLog {
     var triggerRaw: String?
     var intensity: Int = 3
     var id: UUID = UUID()
+    // nil = logged directly with no intervention tool attempt (e.g. Home's
+    // "I smoked" button); set = this log followed a completed intervention.
+    var interventionToolRaw: String?
 
     init() {}
 
@@ -53,5 +68,10 @@ final class CravingLog {
     var trigger: CravingTrigger? {
         get { triggerRaw.flatMap { CravingTrigger(rawValue: $0) } }
         set { triggerRaw = newValue?.rawValue }
+    }
+
+    var interventionTool: InterventionTool? {
+        get { interventionToolRaw.flatMap { InterventionTool(rawValue: $0) } }
+        set { interventionToolRaw = newValue?.rawValue }
     }
 }

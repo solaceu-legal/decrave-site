@@ -53,6 +53,7 @@ struct QuitDateProposalSheet: View {
                 .frame(minHeight: geometry.size.height)
             }
         }
+        .background(Color.appBackground.ignoresSafeArea())
     }
 }
 

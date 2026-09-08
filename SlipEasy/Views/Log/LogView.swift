@@ -8,6 +8,7 @@ import SwiftData
 
 struct LogView: View {
     let outcome: CravingOutcome
+    let tool: InterventionTool?
     @Binding var path: [AppRoute]
 
     @Environment(\.modelContext) private var modelContext
@@ -15,9 +16,17 @@ struct LogView: View {
     @Query(sort: \CravingLog.timestamp, order: .reverse)
     private var logsByRecency: [CravingLog]
 
+    @AppStorage("pricePerPack") private var pricePerPack: Double = 8.5
+
     @State private var selectedTrigger: CravingTrigger?
     @State private var intensity: Double = 3
     @State private var isDraggingIntensity = false
+    @State private var confettiTrigger = false
+
+    private var formattedMoneyPerCraving: String {
+        InsightsEngine.moneySaved(beatenCount: 1, pricePerPack: pricePerPack)
+            .formatted(.currency(code: "USD"))
+    }
 
     // Scales with Dynamic Type so chips stay one word per chip instead of
     // wrapping into unreadable narrow columns at accessibility sizes.
@@ -31,10 +40,7 @@ struct LogView: View {
         // status bar instead of a fixed top padding.
         ScrollView {
             VStack(spacing: 32) {
-                Text(Strings.Log.title)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .padding(.top, 24)
+                header
 
                 VStack(alignment: .leading, spacing: 12) {
                     Text(Strings.Log.triggerQuestion)
@@ -69,10 +75,40 @@ struct LogView: View {
                 .buttonStyle(.hapticProminent)
                 .controlSize(.large)
                 .padding(.horizontal, 24)
-                .padding(.bottom, 24)
+                // Same dual-context reasoning as RelapseConfirmationView's
+                // back button — this screen is reached both from
+                // SOSFlowView's fullScreenCover and pushed under the You
+                // tab's persistent tab bar + FAB.
+                .padding(.bottom, Layout.tabBarClearance)
             }
         }
+        .background(Color.appBackground.ignoresSafeArea())
+        .overlay(ConfettiView(trigger: confettiTrigger))
+        .onAppear {
+            if outcome == .beaten { confettiTrigger = true }
+        }
         .navigationBarBackButtonHidden(true)
+    }
+
+    @ViewBuilder
+    private var header: some View {
+        if outcome == .beaten {
+            VStack(spacing: 6) {
+                Text(Strings.Log.victoryTitle)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                Text(Strings.Log.victorySubtitle(money: formattedMoneyPerCraving, momentum: InsightsEngine.momentumGainPerBeaten))
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            .multilineTextAlignment(.center)
+            .padding(.top, 24)
+        } else {
+            Text(Strings.Log.title)
+                .font(.title2)
+                .fontWeight(.bold)
+                .padding(.top, 24)
+        }
     }
 
     // Bubble position is an approximation of the system slider thumb
@@ -122,7 +158,7 @@ struct LogView: View {
                 .padding(.horizontal, 12)
                 .padding(.vertical, 8)
                 .frame(maxWidth: .infinity)
-                .background(isSelected ? Color.accentColor : Color(.secondarySystemBackground))
+                .background(isSelected ? Color.accentColor : Color.cardFill)
                 .foregroundStyle(isSelected ? Color.white : Color.primary)
                 .clipShape(Capsule())
         }
@@ -137,6 +173,7 @@ struct LogView: View {
         log.outcome = outcome
         log.trigger = selectedTrigger
         log.intensity = Int(intensity)
+        log.interventionTool = tool
         modelContext.insert(log)
 
         if let previousLog, previousLog.outcome == .smoked {
@@ -157,7 +194,7 @@ struct LogView: View {
 
 #Preview {
     NavigationStack {
-        LogView(outcome: .beaten, path: .constant([]))
+        LogView(outcome: .beaten, tool: nil, path: .constant([]))
     }
     .modelContainer(for: CravingLog.self, inMemory: true)
 }

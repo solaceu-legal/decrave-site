@@ -47,11 +47,21 @@ struct RelapseConfirmationView: View {
                     .buttonStyle(.hapticProminent)
                     .controlSize(.large)
                     .padding(.horizontal, 24)
-                    .padding(.bottom, 24)
+                    // This screen is reached both from SOSFlowView's
+                    // fullScreenCover (no tab bar below it) and from the
+                    // You tab's own NavigationStack (pushed under the
+                    // persistent tab bar + floating FAB) — see
+                    // AppRoute.relapseConfirmation's two call sites. Using
+                    // the same clearance as the tab screens keeps this
+                    // button clear of the FAB in the latter case; in the
+                    // former it's just some extra breathing room above the
+                    // home indicator.
+                    .padding(.bottom, Layout.tabBarClearance)
                 }
                 .frame(minHeight: geometry.size.height)
             }
         }
+        .background(Color.appBackground.ignoresSafeArea())
         .navigationBarBackButtonHidden(true)
     }
 }

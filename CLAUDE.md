@@ -1,4 +1,4 @@
-# CLAUDE.md — SlipEasy
+# CLAUDE.md — Decrave
 
 放在 Xcode 工程根目录。Claude Code 每次开工会自动读取。
 新增经验时直接追加，不要删旧条目 —— 这个文件的价值来自累积。
@@ -55,8 +55,8 @@
 **事故**：App 显示名改成 Lenire 后，App Store Connect 里的订阅商品展示名仍是旧名 "SolaceU"，被以 Guideline 5.6（开发者行为准则 / 隐藏功能）拒绝。**一行代码都改不了这个问题。**
 
 **规则**：
-- 品牌名 **SlipEasy 现在定死，永不更改**（2026-08 从 CraveCrush 改名而来；此时还没有任何 ASC 订阅商品、没有提审，属于安全窗口内的最后一次改名，之后不再改）。所有对外可见的地方必须逐字一致
-- 域名：**slipeasy.cc**，隐私政策 / 服务条款托管在 GitHub Pages
+- 品牌名 **Decrave 现在定死，永不更改**（2026-09 从 SlipEasy 改名而来，SlipEasy 之前是 2026-08 从 CraveCrush 改来的——这已经是第二次"最后一次改名"了。此时同样还没有任何 ASC 订阅商品上线、没有提审，仍属于安全窗口内。**教训：上次写"永不更改"没拦住这次改名，说明这条规则真正该管的是"改名这件事本身要走完整清单"，而不是假设不会再发生**）。所有对外可见的地方必须逐字一致
+- 域名：原来的 **slipeasy.cc** 已经不适用，新域名待定——**在新域名确定并且隐私政策/服务条款迁移过去之前，不要提审**
 - 提交前必须逐项核对以下清单：
 
 ```
@@ -80,22 +80,22 @@ StoreKit 2 的代码部分很短，Claude Code 能很快写对。真正出问题
 
 ### 4.3 隐私政策和服务条款必须先上线
 
-Lenire 用 GitHub Pages 托管，SlipEasy 沿用，域名 **slipeasy.cc**。
+Lenire 用 GitHub Pages 托管，之前 SlipEasy 沿用 slipeasy.cc——改名 Decrave 后这个域名不再适用，新域名/托管地址待定。
 **提交审核前这两个 URL 必须能在无痕窗口打开**，否则直接被拒。
 
 ### 4.4 登录方式
 
 Lenire 用 Sign in with Apple 作为唯一登录方式。
-SlipEasy v0.1 **完全不做账号**。v1.0 也优先不做——CloudKit 私有库天然跟随用户的 iCloud 账号，不需要自建账号体系。
+Decrave v0.1 **完全不做账号**。v1.0 也优先不做——CloudKit 私有库天然跟随用户的 iCloud 账号，不需要自建账号体系。
 
 ### 4.5 多语言要连商店元数据一起做
 
 Lenire 上线时是英文默认 + 简中 + 繁中。教训：App 内本地化做了，App Store 描述和**订阅商品名**的本地化容易漏。
-SlipEasy v0.1 **只做英文**，不要主动加本地化脚手架。
+Decrave v0.1 **只做英文**，不要主动加本地化脚手架。
 
 ### 4.6 夜间可用性是硬需求
 
-Lenire 的用户常在深夜情绪低落时使用。SlipEasy 同理——烟瘾高峰常在夜间。
+Lenire 的用户常在深夜情绪低落时使用。Decrave 同理——烟瘾高峰常在夜间。
 → 所有颜色用系统语义色（`Color.primary` / `.secondary` / `Color(.systemBackground)`），深色模式自动生效。
 → 支持动态字体（Dynamic Type），不要写死 `.font(.system(size: 14))`。
 

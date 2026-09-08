@@ -8,6 +8,8 @@ import SwiftData
 
 struct HomeView: View {
     @Binding var path: [AppRoute]
+    var onOpenInsights: () -> Void = {}
+    var onStartQuest: () -> Void = {}
 
     @Environment(\.modelContext) private var modelContext
 
@@ -27,98 +29,99 @@ struct HomeView: View {
     private var plan: ReductionPlan? { reductionPlans.first }
 
     @AppStorage("onboardingStatus") private var onboardingStatus: String = ""
+    @AppStorage("pricePerPack") private var pricePerPack: Double = 8.5
 
     @State private var activeSheet: HomeSheet?
 
     // Scales with Dynamic Type instead of a fixed point size, while still
     // starting well above the ≥72pt the design calls for.
-    @ScaledMetric(relativeTo: .largeTitle) private var numberSize: CGFloat = 88
+    @ScaledMetric(relativeTo: .largeTitle) private var numberSize: CGFloat = 56
+
+    // Roughly what public health sources cite as an average smoking
+    // break — an approximation in the same spirit as the 20/pack figure
+    // used elsewhere (InsightsEngine.moneySaved), not a precise
+    // per-user measurement.
+    private static let minutesPerCigarette = 6
+
+    private var beatenCount: Int { beatenLogs.count }
+
+    private var moneySaved: Double {
+        InsightsEngine.moneySaved(beatenCount: beatenCount, pricePerPack: pricePerPack)
+    }
+
+    private var momentum: Int {
+        InsightsEngine.momentumScore(beatenCount: beatenCount, smokedCount: smokedLogs.count)
+    }
+
+    private var formattedMoneySaved: String {
+        moneySaved.formatted(.currency(code: "USD"))
+    }
+
+    private var timeReclaimedText: String {
+        let totalMinutes = beatenCount * Self.minutesPerCigarette
+        let hours = totalMinutes / 60
+        let minutes = totalMinutes % 60
+        if hours > 0 {
+            return "\(hours)h \(minutes)m"
+        }
+        return "\(minutes)m"
+    }
+
+    // "Time since last cigarette" is a separate, resettable clock from
+    // the never-reset counters above — prefers an unbroken quit date if
+    // one's been set, otherwise falls back to the most recent smoked
+    // log. Nil (never smoked-logged, no quit date) hides the timeline
+    // rather than inventing a start date.
+    private var recoveryAnchor: Date? {
+        if let quitDate = plan?.quitDate, !smokedLogs.contains(where: { $0.timestamp > quitDate }) {
+            return quitDate
+        }
+        return smokedLogs.last?.timestamp
+    }
+
+    private var allLogSummaries: [LogSummary] {
+        (beatenLogs + smokedLogs).map {
+            LogSummary(timestamp: $0.timestamp, outcome: $0.outcome, trigger: $0.trigger, usedIntervention: $0.interventionTool != nil)
+        }
+    }
+
+    private var prediction: InsightsEngine.PredictedWindow? {
+        InsightsEngine.predictedCravingWindow(logs: allLogSummaries)
+    }
 
     var body: some View {
-        // ScrollView + minHeight: centered at normal text sizes, scrolls
-        // instead of squeezing/truncating content at max Dynamic Type
-        // (see InterventionEndView — same pattern). Home didn't need this
-        // before the reduction goal card added more content to the stack.
-        GeometryReader { geometry in
-            ScrollView {
-                VStack(spacing: 32) {
-                    Spacer(minLength: 0)
+        // A plain top-down stack of full-width cards — matches Decrave's
+        // Home layout, where every section is the same card module edge
+        // to edge.
+        ScrollView {
+            VStack(spacing: 16) {
+                heroCard
 
-                    VStack(spacing: 4) {
-                        Text("\(beatenLogs.count)")
-                            .font(.system(size: numberSize, weight: .bold, design: .rounded))
-                            .foregroundStyle(Color.primary)
-                            .minimumScaleFactor(0.5)
-                            .lineLimit(1)
-                        Text(Strings.Home.cravingsBeaten)
-                            .font(.headline)
-                            .foregroundStyle(.secondary)
-                    }
-
-                    if onboardingStatus != "A", plan?.quitDate == nil {
-                        ReductionGoalCard(
-                            plan: plan,
-                            smokedLogs: smokedLogs,
-                            onSetGoal: { activeSheet = .setGoal }
-                        )
-                    }
-
-                    Spacer(minLength: 0)
-
-                    Button {
-                        path.append(.weeklyReport)
-                    } label: {
-                        VStack(spacing: 8) {
-                            HStack(spacing: 4) {
-                                Text(Strings.Home.last7Days)
-                                Image(systemName: "chevron.right")
-                            }
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                            WeeklyBarsView(logs: beatenLogs)
-                        }
-                    }
-                    .buttonStyle(.hapticPlain)
-
-                    Spacer(minLength: 0)
-
-                    VStack(spacing: 12) {
-                        Button {
-                            path.append(.toolPicker)
-                        } label: {
-                            Text("\(Strings.Home.wantToSmoke) 🔥")
-                                .font(.headline)
-                                .minimumScaleFactor(0.5)
-                                .lineLimit(1)
-                                .frame(maxWidth: .infinity)
-                        }
-                        .buttonStyle(.hapticProminent)
-                        .controlSize(.large)
-
-                        Button {
-                            path.append(.log(outcome: .smoked))
-                        } label: {
-                            Text(Strings.Home.iSmoked)
-                                .foregroundStyle(.secondary)
-                        }
-                        .buttonStyle(.hapticPlain)
-                    }
-                    .padding(.horizontal, 24)
-                    .padding(.bottom, 24)
+                if onboardingStatus != "A", plan?.quitDate == nil {
+                    ReductionGoalCard(
+                        plan: plan,
+                        smokedLogs: smokedLogs,
+                        onSetGoal: { activeSheet = .setGoal }
+                    )
                 }
-                .frame(minHeight: geometry.size.height)
-            }
-        }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    path.append(.settings)
-                } label: {
-                    Image(systemName: "gearshape")
+
+                if let recoveryAnchor {
+                    bodyRecoveryCard(since: recoveryAnchor)
                 }
-                .buttonStyle(.hapticPlain)
+
+                TriggerRadarPreviewCard(prediction: prediction, onTap: onOpenInsights)
+
+                TodaysQuestCard(onAccept: onStartQuest)
+
+                // Not a NavigationLink to the full report anymore — that
+                // now lives in the Insights tab (see MainFlowView).
+                weeklyCard
             }
+            .padding(.horizontal, 20)
+            .padding(.top, 24)
+            .padding(.bottom, Layout.tabBarClearance)
         }
+        .background(Color.appBackground.ignoresSafeArea())
         .onAppear {
             reconcileReductionPlans()
             checkQuitDateProposal()
@@ -148,6 +151,87 @@ struct HomeView: View {
                 }
             }
         }
+    }
+
+    private var heroCard: some View {
+        VStack(spacing: 16) {
+            HStack(alignment: .top) {
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(formattedMoneySaved)
+                        .font(.system(size: numberSize, weight: .bold, design: .rounded))
+                        .foregroundStyle(LinearGradient.brand)
+                        .minimumScaleFactor(0.5)
+                        .lineLimit(1)
+                    Text(Strings.Home.moneySavedCaption)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                VStack(spacing: 4) {
+                    MomentumRingView(score: momentum)
+                    Text(Strings.Home.momentumLabel)
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(.secondary)
+                }
+            }
+
+            VStack(spacing: 4) {
+                Text("\(beatenCount)")
+                    .font(.system(size: 34, weight: .bold, design: .rounded))
+                    .foregroundStyle(Color.primary)
+                Text(Strings.Home.cravingsBeaten)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+
+            HStack(spacing: 8) {
+                statChip(icon: "flame.fill", text: Strings.Home.cigsAvoided(beatenCount))
+                statChip(icon: "clock.fill", text: Strings.Home.timeReclaimed(timeReclaimedText))
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .padding(20)
+        .cardStyle(elevated: true)
+    }
+
+    private func statChip(icon: String, text: String) -> some View {
+        HStack(spacing: 6) {
+            Image(systemName: icon)
+                .font(.caption2)
+            Text(text)
+                .font(.caption)
+                .fontWeight(.semibold)
+        }
+        .foregroundStyle(.primary)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 7)
+        .background(Color.white.opacity(0.06))
+        .clipShape(Capsule())
+    }
+
+    private func bodyRecoveryCard(since: Date) -> some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Text(Strings.Home.bodyRecoveryTitle)
+                .font(.caption)
+                .fontWeight(.bold)
+                .foregroundStyle(Color.accentColor)
+            BodyRecoveryTimelineView(since: since)
+        }
+        .padding(20)
+        .cardStyle()
+    }
+
+    private var weeklyCard: some View {
+        VStack(spacing: 12) {
+            Text(Strings.Home.last7Days)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+            WeeklyBarsView(logs: beatenLogs)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(20)
+        .cardStyle()
     }
 
     /// CloudKit can't enforce a singleton (no @Attribute(.unique) allowed),

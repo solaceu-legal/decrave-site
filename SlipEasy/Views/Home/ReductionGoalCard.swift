@@ -16,12 +16,20 @@ struct ReductionGoalCard: View {
     }
 
     var body: some View {
+        // Both states render as the same full-width card shape as every
+        // other Home section — this used to be a hugging-width pill in
+        // the "no goal set" state and a bare, uncontained line of text in
+        // the "goal set" state, which read as misaligned next to the
+        // hero/weekly cards above and below it.
         if let target = plan?.targetCigsPerDay {
             // Neutral color and wording regardless of whether today's
             // count is over target — no red, no "over budget" language.
             Text(Strings.ReductionGoal.todayProgress(smoked: todaySmokedCount, target: target))
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .cardStyle()
         } else {
             Button(action: onSetGoal) {
                 VStack(spacing: 4) {
@@ -34,10 +42,9 @@ struct ReductionGoalCard: View {
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 10)
-                .background(Color(.secondarySystemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 12))
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 16)
+                .cardStyle()
             }
             .buttonStyle(.hapticPlain)
         }

@@ -49,6 +49,7 @@ struct SetGoalSheet: View {
                 .frame(minHeight: geometry.size.height)
             }
         }
+        .background(Color.appBackground.ignoresSafeArea())
         .onAppear {
             target = Double(plan?.targetCigsPerDay ?? cigsPerDayStored)
         }

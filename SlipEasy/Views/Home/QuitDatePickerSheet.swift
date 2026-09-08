@@ -41,6 +41,7 @@ struct QuitDatePickerSheet: View {
             .padding(.horizontal, 32)
             .padding(.bottom, 24)
         }
+        .background(Color.appBackground.ignoresSafeArea())
     }
 
     private func save() {

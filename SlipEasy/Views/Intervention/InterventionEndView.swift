@@ -6,11 +6,12 @@
 import SwiftUI
 
 struct InterventionEndView: View {
+    let tool: InterventionTool
     @Binding var path: [AppRoute]
 
     var body: some View {
         ZStack {
-            Color.black.ignoresSafeArea()
+            Color.appBackground.ignoresSafeArea()
 
             // ScrollView + minHeight keeps this centered at normal text
             // sizes but lets it scroll instead of truncating this
@@ -36,7 +37,7 @@ struct InterventionEndView: View {
 
                         VStack(spacing: 12) {
                             Button {
-                                path.append(.log(outcome: .beaten))
+                                path.append(.log(outcome: .beaten, tool: tool))
                             } label: {
                                 Text(Strings.Intervention.didntSmoke)
                                     .frame(maxWidth: .infinity)
@@ -45,7 +46,7 @@ struct InterventionEndView: View {
                             .controlSize(.large)
 
                             Button {
-                                path.append(.log(outcome: .smoked))
+                                path.append(.log(outcome: .smoked, tool: tool))
                             } label: {
                                 Text(Strings.Intervention.smoked)
                                     .foregroundStyle(.white.opacity(0.7))
@@ -66,6 +67,6 @@ struct InterventionEndView: View {
 
 #Preview {
     NavigationStack {
-        InterventionEndView(path: .constant([]))
+        InterventionEndView(tool: .urgeSurfing, path: .constant([]))
     }
 }

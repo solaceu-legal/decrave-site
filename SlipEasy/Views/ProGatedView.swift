@@ -13,7 +13,18 @@ struct ProGatedView<Content: View>: View {
     let lockedBody: String
     @ViewBuilder let content: () -> Content
 
+    @State private var showPaywall = false
+
     var body: some View {
+        mainContent
+            .background(Color.appBackground.ignoresSafeArea())
+            .sheet(isPresented: $showPaywall) {
+                PaywallView()
+            }
+    }
+
+    @ViewBuilder
+    private var mainContent: some View {
         if ProAccess.isUnlocked {
             ScrollView {
                 content()
@@ -57,7 +68,7 @@ struct ProGatedView<Content: View>: View {
                 .fixedSize(horizontal: false, vertical: true)
 
             Button(Strings.Report.unlockCTA) {
-                // Phase 6 wires this to the real StoreKit paywall.
+                showPaywall = true
             }
             .buttonStyle(.hapticProminent)
             .controlSize(.large)
