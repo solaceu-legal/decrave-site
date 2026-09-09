@@ -54,7 +54,7 @@ struct HomeView: View {
     }
 
     private var momentum: Int {
-        InsightsEngine.momentumScore(beatenCount: beatenCount, smokedCount: smokedLogs.count)
+        InsightsEngine.momentumScore(logs: allLogSummaries)
     }
 
     private var formattedMoneySaved: String {

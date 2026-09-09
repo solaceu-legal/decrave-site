@@ -331,8 +331,6 @@ enum Strings {
     }
 
     enum Settings {
-        static let title = "Settings"
-
         static let logSlipRow = "I smoked — log it safely"
 
         static let freeTitle = "Free plan"

@@ -47,7 +47,10 @@ struct SettingsView: View {
     private var beatenCount: Int { beatenLogs.count }
 
     private var momentum: Int {
-        InsightsEngine.momentumScore(beatenCount: beatenCount, smokedCount: smokedLogs.count)
+        let logs = (beatenLogs + smokedLogs).map {
+            LogSummary(timestamp: $0.timestamp, outcome: $0.outcome, trigger: $0.trigger, usedIntervention: $0.interventionTool != nil)
+        }
+        return InsightsEngine.momentumScore(logs: logs)
     }
 
     private var formattedMoneySaved: String {
@@ -56,6 +59,18 @@ struct SettingsView: View {
 
     var body: some View {
         List {
+            // Plain inline text instead of .navigationTitle's native large
+            // title — matches WeeklyReportView's "Insights" header (same
+            // .title2/.bold styling) so the two tabs read as the same size
+            // instead of the taller system large-title font Settings used
+            // to render at.
+            Section {
+                Text(Strings.Tab.you)
+                    .font(.title2)
+                    .fontWeight(.bold)
+            }
+            .listRowBackground(Color.clear)
+
             Section {
                 membershipCard
             }
@@ -164,7 +179,6 @@ struct SettingsView: View {
         }
         .scrollContentBackground(.hidden)
         .background(Color.appBackground.ignoresSafeArea())
-        .navigationTitle(Strings.Settings.title)
         .task {
             let isAuthorized = await NotificationManager.isAuthorized()
             if !isAuthorized && notificationsEnabled {

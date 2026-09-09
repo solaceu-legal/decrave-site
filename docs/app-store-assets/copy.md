@@ -67,7 +67,23 @@ nicotine,tobacco,vape,relapse,urge,craving,tracker,habit,addiction,recovery,mind
 
 ## 5. What's New（版本说明）
 
-v1.0 是首次提审，**App Store Connect 首个版本不会展示"新功能"这一栏**，这个字段可以先留空，等 v1.1 有实际更新时再写。不用现在准备。
+之前说"首个版本不会展示这一栏"不准确，实际是个空输入框——既然会显示，写一段简短的欢迎语+亮点比空着好。这个字段的本职是"这个版本改了什么"，v1.0 没有上一版可比，所以不用写成完整功能清单（那是 Description 的活），保持简短；等 v1.1 更新时这里的内容会被新版本说明覆盖，现在写的东西本来就是临时的。
+
+```
+Welcome to Decrave.
+
+Decrave is built for people who still smoke and want to quit — no quit date required. Log every craving you beat, and watch a number that never resets, no matter what happens along the way.
+
+This first release includes:
+• A private, in-the-moment tool for riding out a craving
+• Money saved and cravings beaten, tracked for good
+• Trigger Radar, Momentum, and body-recovery milestones
+• Decrave Pro: deeper insight into your own patterns, plus full data export
+
+Thanks for trying it early — we'd love to hear what you think.
+```
+
+约 480 字符。
 
 ---
 
@@ -104,20 +120,22 @@ v1.0 是首次提审，**App Store Connect 首个版本不会展示"新功能"�
 
 ## 8. Age Rating（年龄分级）问卷怎么填
 
-⚠️ 这块我专门查了一下最新情况，因为 Apple 在 2026 年把年龄分级系统整个换了一套（新增 13+/16+/18+ 档位，问卷题目也重写了），怕凭旧印象说错。
+⚠️ 这块最早查资料时判断错了，后来对照真实上架的同类 App 才更正——记录一下更正后的结论，避免以后又翻回旧版本。
 
-Decrave 涉及"烟草"这个主题，属于新问卷里 **Mature Themes（成人题材）→ Alcohol, Tobacco, or Drug Use or References** 这一项。因为 App 只是**提到/讨论**吸烟这个行为（帮用户减少/戒除），既不描绘吸烟画面也不美化它，如实选择应该是：
+Decrave 涉及"烟草"这个主题，属于新问卷里 **Mature Themes（成人题材）→ Alcohol, Tobacco, or Drug Use or References** 这一项。最早以为 App 只是"提到"吸烟、没有画面，应该选偏轻的 "Infrequent/Mild"（对应 13+）。但实际去查了几个已上架的同类戒烟 App（EasyQuit、Kwit、Smoke Free、iQuit、Tobaquit）的公开分级，全部都是选 **"Frequent/Intense"（频繁）**，没有一个是"偶尔"——原因是这道题问的是"用户在 App 里多频繁遇到这个话题"，不是"App 的意图是否鼓励吸烟"，而 Decrave 的核心循环（记录烟瘾、"I smoked"按钮、每日抽几根）几乎每次打开都在处理这个主题，属于高频。
 
-- **Infrequent/Mild**（偶尔提及）→ 对应最终评级 **13+**
+最终选择：
 
-不要选 "Frequent/Intense"（那会导向 18+，且不符合这个 App 的实际内容）。
+- **Frequent/Intense（频繁）** → 对应最终评级 **18+**（已经在 ASC 里实际选出这个结果，`docs/legal/privacy-policy.html` §7 儿童隐私那段也已经跟着改成"18+、不面向 18 岁以下"）
 
-新问卷里还会单独问到"是否涉及 medical or wellness 主题"——如实回答"是，wellness/habit-tracking 类"即可，这和 `docs/legal/terms-of-service.html` 里"not a medical device"的表述是一致的，不会有矛盾。
+医疗信息那一题（"医疗或治疗信息"）选的是 **偶尔**（不是无，也不是频繁）——对应 Home 页的 Body recovery 时间线卡片，同样参照了这几个同类 App 的公开分级（它们也都是选 Infrequent Medical Treatment information）。"健康或保健主题"选**是**。
 
 **填表路径**：App Store Connect → App Information → Age Ratings → Set Up Age Rating，一共 7 步问卷。
 
 Sources:
 - [Updated age ratings in App Store Connect – Apple Developer](https://developer.apple.com/news/?id=ks775ehf)
+- [EasyQuit - Stop Smoking on the App Store](https://apps.apple.com/us/app/easyquit-stop-smoking/id1508110799)
+- [Smoke Free - Quit Smoking Now on the App Store](https://apps.apple.com/us/app/smoke-free-quit-smoking-now/id577767592)
 - [App Store Connect Help — Age ratings](https://developer.apple.com/help/app-store-connect/reference/age-ratings)
 
 ---
