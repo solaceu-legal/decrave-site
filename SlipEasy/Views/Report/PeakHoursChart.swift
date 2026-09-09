@@ -48,6 +48,15 @@ struct PeakHoursChart: View {
                     y: .value("Count", item.count)
                 )
                 .foregroundStyle(LinearGradient.brand)
+                // Skips zero-count hours — labeling all 24 bars would be
+                // unreadable clutter, and a 0 bar is already invisible.
+                .annotation(position: .top) {
+                    if item.count > 0 {
+                        Text("\(item.count)")
+                            .font(.system(size: 8, weight: .semibold, design: .rounded))
+                            .foregroundStyle(.secondary)
+                    }
+                }
             }
             .chartXAxis {
                 AxisMarks(values: [0, 6, 12, 18]) { value in

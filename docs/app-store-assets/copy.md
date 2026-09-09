@@ -1,0 +1,130 @@
+# Decrave — App Store Connect 文案与素材清单
+
+生成日期：2026-09-09。所有文案已按 `CLAUDE.md` §6 红线检查（无 treat/cure/heal/therapy/clinically proven/medical/diagnosis/prescription，无"烟瘾会消失"承诺）。
+
+---
+
+## 1. App 信息
+
+| 字段 | 内容 | 字数限制 | 实际字数 |
+|---|---|---|---|
+| App 名称 (Name) | `Decrave: Quit Smoking Support` | 30 | 29 |
+| 副标题 (Subtitle) | `No quit date required` | 30 | 21 |
+| 分类 (Category) | Health & Fitness（主）/ Lifestyle（次，可选） | — | — |
+| 版本号 | 1.0（已在 Xcode 里设好，不用改） | — | — |
+
+**为什么是这两句**：竞品几乎都用"连续戒烟天数"做卖点，App 名称已经用完了"Quit Smoking"这个大家会搜的词；副标题专门用来打差异化——"不需要先定戒烟日"是这个 App 和所有竞品最大的不同（对应 `CLAUDE.md` §1）。
+
+---
+
+## 2. 推广文案 (Promotional Text)
+
+> Still smoking? Start anyway. Decrave counts every craving you beat — not days since you quit. A slip doesn't erase your count. Zero is impossible.
+
+146/170 字符。这个字段可以**随时改，不用重新提审**，适合后续做 A/B 测试或节日文案。
+
+---
+
+## 3. 完整描述 (Description)
+
+```
+Decrave is for people who still smoke and want to quit — not people who already have.
+
+Most quit-smoking apps start by asking "what day did you quit?" Decrave doesn't. It's built for the messier, more honest part before that: the part where you're still smoking sometimes, still slipping, and still trying anyway.
+
+THE COUNT THAT NEVER RESETS
+Every other app tracks a streak — one slip and you're back to Day 0. Decrave counts something different: how many cravings you've beaten, total, ever. That number only goes up. If you smoke, it doesn't move backward. It just waits for the next craving you beat.
+
+IN THE MOMENT
+When a craving hits, open Decrave and ride it out with a short breathing and urge-surfing exercise, based on techniques studied for craving management. You're not promised the craving will vanish — it might still be there when you finish. What changes is that you'll have just practiced having it without smoking.
+
+WHAT YOU'LL SEE
+• Momentum score — a gentler alternative to a streak that bends when you slip, but never breaks
+• Trigger Radar — learn when and why your cravings tend to hit hardest
+• Money saved — a running total based on your own price per pack, never resets
+• Craving intensity, top triggers, and peak-hour charts, built entirely from your own logged data
+• Milestones for every 5th, 10th, 25th craving beaten, all the way up
+
+DECRAVE PRO
+Free users get the core loop: logging, the in-the-moment tool, Momentum, and headline stats. Decrave Pro unlocks deeper insight into your own patterns — trigger-by-trigger breakdowns, peak-hour prediction, and full data export — for people who want to understand their habit, not just track it.
+
+Decrave is a wellness and habit-support tool, not a substitute for professional care. If you have questions about nicotine dependence, talk to a doctor.
+```
+
+约 1450 字符，远低于 4000 上限，没有必要硬凑满。
+
+---
+
+## 4. 关键词 (Keywords，100 字符，逗号分隔无空格)
+
+```
+nicotine,tobacco,vape,relapse,urge,craving,tracker,habit,addiction,recovery,mindfulness,sobriety
+```
+
+96/100 字符。"quit"、"smoking" 已经在 App 名称里出现过（Apple 会自动索引名称/副标题里的词），这里故意不重复，省下的字符位换成别的搜索词。
+
+---
+
+## 5. What's New（版本说明）
+
+v1.0 是首次提审，**App Store Connect 首个版本不会展示"新功能"这一栏**，这个字段可以先留空，等 v1.1 有实际更新时再写。不用现在准备。
+
+---
+
+## 6. 订阅商品 (Decrave Pro) —— App Store Connect 里要新建的 3 个商品
+
+代码里已经写好的商品 ID（来自 `SlipEasy/Services/ProProduct.swift`，**内部标识，不用改，也不需要跟品牌名一致**——这条和 Bundle ID 是同一个道理，见 `CLAUDE.md` §4.1）：
+
+| Product ID | 类型 | 建议价格（来自 `docs/SlipEasy-v1.0-开发任务书.md`） | ASC 里必须填的"显示名称" |
+|---|---|---|---|
+| `com.slipeasy.pro.monthly` | 自动续费订阅 | $9.99 / 月 | **Decrave Pro Monthly** |
+| `com.slipeasy.pro.yearly` | 自动续费订阅（主推，含 7 天试用） | $59.99 / 年 | **Decrave Pro Yearly** |
+| `com.slipeasy.pro.lifetime` | 非消耗型内购（买断） | $99.99 一次性 | **Decrave Pro Lifetime** |
+
+⚠️ **这一步是 `CLAUDE.md` §4.1 那次 Guideline 5.6 拒审事故的直接教训**——显示名称必须写 **Decrave**，绝对不能出现 SlipEasy 或 CraveCrush 这两个旧名字的任何残留。三个商品、每种语言（这里只做英文）都要单独检查一遍。
+
+---
+
+## 7. App Privacy（隐私"营养标签"）问卷怎么填
+
+我读了代码里实际的数据行为（`PrivacyInfo.xcprivacy`、`Services/Analytics.swift`、`Services/StoreManager.swift`）和已经写好的 `docs/legal/privacy-policy.html`，两边应该完全对得上：
+
+**数据收集情况**：
+- **App 功能所需数据**：无。所有烟瘾记录、目标、价格设置都只存在设备本地 SwiftData / iCloud 私有库（CloudKit），Decrave 团队自己拿不到。
+- **分析数据（TelemetryDeck）**：会收集"产品交互"类事件（如 `craving_logged`、`app_opened`），但**不含姓名、邮箱、设备广告标识符（IDFA）、IP**。ASC 问卷里对应勾选：
+  - Data Type: **Product Interaction**（或 "Other Usage Data"）
+  - Linked to your identity: **No**
+  - Used for tracking: **No**（这一点很重要，`PrivacyInfo.xcprivacy` 里 `NSPrivacyTracking` 已经是 `false`，如果 ASC 问卷选了"是用于 tracking"，会跟这个文件互相矛盾导致审核问题）
+- **订阅/内购**：StoreKit 直连，Decrave 自己不接触也不存储支付信息，这部分数据由 Apple 处理，问卷里可以直接说明"handled by Apple"或对应勾选"Not collected by developer"。
+- **不收集**：位置、联系人、照片、健康数据（HealthKit 没用到）、精确/粗略地理位置、用户内容分享给第三方。
+
+**填表路径**：App Store Connect → 选中 App → App Privacy → Get Started，按上面的分类逐项勾选。
+
+---
+
+## 8. Age Rating（年龄分级）问卷怎么填
+
+⚠️ 这块我专门查了一下最新情况，因为 Apple 在 2026 年把年龄分级系统整个换了一套（新增 13+/16+/18+ 档位，问卷题目也重写了），怕凭旧印象说错。
+
+Decrave 涉及"烟草"这个主题，属于新问卷里 **Mature Themes（成人题材）→ Alcohol, Tobacco, or Drug Use or References** 这一项。因为 App 只是**提到/讨论**吸烟这个行为（帮用户减少/戒除），既不描绘吸烟画面也不美化它，如实选择应该是：
+
+- **Infrequent/Mild**（偶尔提及）→ 对应最终评级 **13+**
+
+不要选 "Frequent/Intense"（那会导向 18+，且不符合这个 App 的实际内容）。
+
+新问卷里还会单独问到"是否涉及 medical or wellness 主题"——如实回答"是，wellness/habit-tracking 类"即可，这和 `docs/legal/terms-of-service.html` 里"not a medical device"的表述是一致的，不会有矛盾。
+
+**填表路径**：App Store Connect → App Information → Age Ratings → Set Up Age Rating，一共 7 步问卷。
+
+Sources:
+- [Updated age ratings in App Store Connect – Apple Developer](https://developer.apple.com/news/?id=ks775ehf)
+- [App Store Connect Help — Age ratings](https://developer.apple.com/help/app-store-connect/reference/age-ratings)
+
+---
+
+## 9. Support URL / Marketing URL
+
+- **Support URL（必填）**：`https://decrave.net/support.html` —— 我已经写好了这个页面：[docs/legal/support.html](../legal/support.html)，风格和已有的隐私政策/服务条款页面一致，包含常见问题（订阅怎么取消、复吸算不算清零等）。**现在还是本地文件，需要你部署上线后这个 URL 才能真正打开。**
+- **Marketing URL（选填）**：可以先留空，或者以后有独立官网了再填，不影响提审。
+- **隐私政策 URL**：`https://decrave.net/privacy-policy.html`
+- **服务条款 URL**：`https://decrave.net/terms-of-service.html`（这个要填在 ASC 的 EULA 字段，不是 Support URL 字段）

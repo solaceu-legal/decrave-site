@@ -253,7 +253,7 @@ struct WeeklyReportView: View {
         VStack(alignment: .leading, spacing: 8) {
             MoneyTrajectoryChart(points: trajectoryPoints)
             if let lastPoint = trajectoryPoints.last {
-                Text(Strings.Report.moneyTrajectoryCaption(lastPoint.cumulativeSaved.formatted(.currency(code: "USD"))))
+                Text(Strings.Report.moneyTrajectoryCaption(InsightsEngine.formattedMoney(lastPoint.cumulativeSaved)))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }

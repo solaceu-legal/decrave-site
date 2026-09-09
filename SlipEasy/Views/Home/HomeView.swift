@@ -33,9 +33,13 @@ struct HomeView: View {
 
     @State private var activeSheet: HomeSheet?
 
-    // Scales with Dynamic Type instead of a fixed point size, while still
-    // starting well above the ≥72pt the design calls for.
-    @ScaledMetric(relativeTo: .largeTitle) private var numberSize: CGFloat = 56
+    // Scales with Dynamic Type. Sized to fit two side-by-side hero
+    // numbers (money saved and cravings beaten, see heroCard) at their
+    // typical lengths without either one needing to shrink more than
+    // the other — a smaller shared size, rather than each Text's own
+    // minimumScaleFactor racing independently, is what keeps them
+    // rendering at the same height.
+    @ScaledMetric(relativeTo: .title) private var numberSize: CGFloat = 38
 
     // Roughly what public health sources cite as an average smoking
     // break — an approximation in the same spirit as the 20/pack figure
@@ -54,7 +58,7 @@ struct HomeView: View {
     }
 
     private var formattedMoneySaved: String {
-        moneySaved.formatted(.currency(code: "USD"))
+        InsightsEngine.formattedMoneyCompact(moneySaved)
     }
 
     private var timeReclaimedText: String {
@@ -153,37 +157,24 @@ struct HomeView: View {
         }
     }
 
+    // Money saved and cravings beaten are Decrave's two never-reset
+    // counters — shown as equal-weight twins side by side, rather than
+    // one dominant hero number with the other as an afterthought.
+    // Momentum (which can dip) deliberately stays a smaller ring below,
+    // not competing with either.
     private var heroCard: some View {
         VStack(spacing: 16) {
-            HStack(alignment: .top) {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text(formattedMoneySaved)
-                        .font(.system(size: numberSize, weight: .bold, design: .rounded))
-                        .foregroundStyle(LinearGradient.brand)
-                        .minimumScaleFactor(0.5)
-                        .lineLimit(1)
-                    Text(Strings.Home.moneySavedCaption)
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                }
-                Spacer()
-                VStack(spacing: 4) {
-                    MomentumRingView(score: momentum)
-                    Text(Strings.Home.momentumLabel)
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(.secondary)
-                }
+            HStack(alignment: .top, spacing: 12) {
+                heroStat(value: formattedMoneySaved, caption: Strings.Home.moneySavedCaption, style: AnyShapeStyle(LinearGradient.brand))
+                heroStat(value: "\(beatenCount)", caption: Strings.Home.cravingsBeaten, style: AnyShapeStyle(Color.violet))
             }
 
-            VStack(spacing: 4) {
-                Text("\(beatenCount)")
-                    .font(.system(size: 34, weight: .bold, design: .rounded))
-                    .foregroundStyle(Color.primary)
-                Text(Strings.Home.cravingsBeaten)
-                    .font(.subheadline)
+            HStack(spacing: 6) {
+                MomentumRingView(score: momentum)
+                Text(Strings.Home.momentumLabel)
+                    .font(.system(size: 10, weight: .semibold))
                     .foregroundStyle(.secondary)
             }
-            .frame(maxWidth: .infinity)
 
             HStack(spacing: 8) {
                 statChip(icon: "flame.fill", text: Strings.Home.cigsAvoided(beatenCount))
@@ -193,6 +184,21 @@ struct HomeView: View {
         .frame(maxWidth: .infinity)
         .padding(20)
         .cardStyle(elevated: true)
+    }
+
+    private func heroStat(value: String, caption: String, style: AnyShapeStyle) -> some View {
+        VStack(spacing: 2) {
+            Text(value)
+                .font(.system(size: numberSize, weight: .bold, design: .rounded))
+                .foregroundStyle(style)
+                .minimumScaleFactor(0.5)
+                .lineLimit(1)
+            Text(caption)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
     }
 
     private func statChip(icon: String, text: String) -> some View {

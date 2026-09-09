@@ -128,6 +128,43 @@ enum InsightsEngine {
         return pricePerCigarette * Double(beatenCount)
     }
 
+    // Decrave's target market only: US, UK, Canada, Australia. A price
+    // the user entered assuming one of these four should display in
+    // that same currency, but a device set to some other region
+    // shouldn't suddenly show, say, JPY against a price they meant in
+    // dollars — USD is the safe fallback there.
+    private static let supportedCurrencyCodes: Set<String> = ["USD", "GBP", "CAD", "AUD"]
+
+    static var localizedCurrencyCode: String {
+        guard let code = Locale.current.currency?.identifier, supportedCurrencyCodes.contains(code) else {
+            return "USD"
+        }
+        return code
+    }
+
+    // Centralizes currency formatting so every money display follows the
+    // device's own region — and, since the currency code now always
+    // matches the locale, Foundation never needs to prefix it with a
+    // disambiguator like "US$" or "CA$" the way it would showing USD
+    // explicitly on a non-US device.
+    static func formattedMoney(_ amount: Double) -> String {
+        amount.formatted(.currency(code: localizedCurrencyCode))
+    }
+
+    private static let currencySymbols: [String: String] = ["USD": "$", "GBP": "£", "CAD": "$", "AUD": "$"]
+
+    // Bare symbol, never a "US$"/"CA$"-style disambiguation prefix —
+    // for the Home hero number specifically, which sits beside cravings
+    // beaten in a fixed-width column (see HomeView.heroStat). A never-
+    // resets total will keep growing digits over months of use, and the
+    // prefix is exactly the few extra characters that would eventually
+    // force a wrap there. formattedMoney(_:) above (with its fuller,
+    // occasionally-disambiguated form) is still correct everywhere else.
+    static func formattedMoneyCompact(_ amount: Double) -> String {
+        let symbol = currencySymbols[localizedCurrencyCode] ?? "$"
+        return symbol + amount.formatted(.number.precision(.fractionLength(2)))
+    }
+
     struct PredictedWindow {
         let weekday: Int // Calendar weekday: 1 = Sunday ... 7 = Saturday
         let hour: Int // 0-23

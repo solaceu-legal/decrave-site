@@ -24,8 +24,7 @@ struct LogView: View {
     @State private var confettiTrigger = false
 
     private var formattedMoneyPerCraving: String {
-        InsightsEngine.moneySaved(beatenCount: 1, pricePerPack: pricePerPack)
-            .formatted(.currency(code: "USD"))
+        InsightsEngine.formattedMoney(InsightsEngine.moneySaved(beatenCount: 1, pricePerPack: pricePerPack))
     }
 
     // Scales with Dynamic Type so chips stay one word per chip instead of

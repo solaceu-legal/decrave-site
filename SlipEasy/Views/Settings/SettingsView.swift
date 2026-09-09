@@ -51,8 +51,7 @@ struct SettingsView: View {
     }
 
     private var formattedMoneySaved: String {
-        InsightsEngine.moneySaved(beatenCount: beatenCount, pricePerPack: pricePerPack)
-            .formatted(.currency(code: "USD"))
+        InsightsEngine.formattedMoney(InsightsEngine.moneySaved(beatenCount: beatenCount, pricePerPack: pricePerPack))
     }
 
     var body: some View {

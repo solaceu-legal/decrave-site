@@ -12,7 +12,7 @@ struct OnboardingPricePage: View {
     @ScaledMetric(relativeTo: .largeTitle) private var numberSize: CGFloat = 48
 
     private var formattedPrice: String {
-        pricePerPack.formatted(.currency(code: "USD"))
+        InsightsEngine.formattedMoney(pricePerPack)
     }
 
     var body: some View {
