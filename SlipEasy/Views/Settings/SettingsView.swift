@@ -123,12 +123,6 @@ struct SettingsView: View {
                     }
                 }
 
-                if let url = URL(string: "https://apps.apple.com/account/subscriptions") {
-                    Link(destination: url) {
-                        Text(Strings.Settings.manageSubscription)
-                    }
-                }
-
                 Button {
                     restorePurchases()
                 } label: {

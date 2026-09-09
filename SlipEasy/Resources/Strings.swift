@@ -364,7 +364,6 @@ enum Strings {
         static let proSectionHeader = "Decrave Pro"
         static let dataExportRow = "Export your data"
 
-        static let manageSubscription = "Manage subscription"
         static let restorePurchases = "Restore purchases"
         static let restoreSuccessTitle = "Purchases restored"
         static let restoreSuccessMessage = "Your Decrave Pro access is active."
@@ -376,8 +375,8 @@ enum Strings {
         static let legalSectionHeader = "Legal"
         static let privacyPolicy = "Privacy Policy"
         static let termsOfUse = "Terms of Use"
-        static let privacyPolicyURL = "https://solaceu-legal.github.io/slipeasy-legal/privacy-policy.html"
-        static let termsOfUseURL = "https://solaceu-legal.github.io/slipeasy-legal/terms.html"
+        static let privacyPolicyURL = "https://decrave.net/privacy-policy.html"
+        static let termsOfUseURL = "https://decrave.net/terms-of-service.html"
 
         static let exportTitle = "Export your data"
         static let exportDescription = "Download everything you've logged as a CSV file — every craving, trigger, and intensity you've recorded."
