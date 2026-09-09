@@ -106,7 +106,7 @@ struct DataExportView: View {
             csv += "\(date),\(time),\(outcome),\(trigger),\(log.intensity)\n"
         }
 
-        let url = FileManager.default.temporaryDirectory.appendingPathComponent("SlipEasy-export.csv")
+        let url = FileManager.default.temporaryDirectory.appendingPathComponent("Decrave-export.csv")
         try? csv.write(to: url, atomically: true, encoding: .utf8)
         exportFileURL = url
     }

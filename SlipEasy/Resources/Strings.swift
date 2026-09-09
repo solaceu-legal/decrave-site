@@ -390,7 +390,16 @@ enum Strings {
 
     enum Paywall {
         static let title = "Unlock Decrave Pro"
-        static let subtitle = "See your patterns over time, and export everything you've logged. The tools to face a craving stay free — always."
+        static let subtitle = "The tools to face a craving stay free — always. Pro adds the full picture behind them:"
+
+        // Each pairs with an SF Symbol in PaywallView.benefitsList — named to
+        // match the exact in-app feature names (Trigger Radar, Peak hours)
+        // rather than vague "see your patterns", so what's being unlocked is
+        // concrete before the plan cards ask for money.
+        static let benefitTriggerRadar = "Trigger Radar — know when your next craving is likely to hit"
+        static let benefitDeepInsights = "Deep insights — see which triggers you're beating and which tools work"
+        static let benefitPeakHours = "Peak hours — your full hour-by-hour craving map"
+        static let benefitFullExport = "Full export — your whole history as a CSV, whenever you want it"
 
         static let bestValueBadge = "Best value"
         static func freeTrialLabel(days: Int) -> String {

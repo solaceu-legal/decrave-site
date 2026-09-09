@@ -74,18 +74,52 @@ struct PaywallView: View {
     }
 
     private var header: some View {
-        VStack(spacing: 8) {
-            Text(Strings.Paywall.title)
-                .font(.title2)
-                .fontWeight(.bold)
-                .multilineTextAlignment(.center)
-                .fixedSize(horizontal: false, vertical: true)
-            Text(Strings.Paywall.subtitle)
+        VStack(spacing: 20) {
+            VStack(spacing: 8) {
+                Text(Strings.Paywall.title)
+                    .font(.title2)
+                    .fontWeight(.bold)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+                Text(Strings.Paywall.subtitle)
+                    .font(.subheadline)
+                    .foregroundStyle(.secondary)
+                    .multilineTextAlignment(.center)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+            benefitsList
+        }
+    }
+
+    // Named to match the exact in-app feature titles (Trigger Radar, Peak
+    // hours) rather than a generic "unlock everything" line — someone
+    // deciding whether to pay should see specifically what that is before
+    // the plan cards below ask for money.
+    private var benefitsList: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            benefitRow(icon: "target", text: Strings.Paywall.benefitTriggerRadar)
+            benefitRow(icon: "lightbulb.fill", text: Strings.Paywall.benefitDeepInsights)
+            benefitRow(icon: "clock.fill", text: Strings.Paywall.benefitPeakHours)
+            benefitRow(icon: "square.and.arrow.up", text: Strings.Paywall.benefitFullExport)
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(16)
+        .background(Color.cardFill)
+        .clipShape(RoundedRectangle(cornerRadius: 16))
+    }
+
+    private func benefitRow(icon: String, text: String) -> some View {
+        HStack(alignment: .top, spacing: 12) {
+            Image(systemName: icon)
                 .font(.subheadline)
-                .foregroundStyle(.secondary)
-                .multilineTextAlignment(.center)
+                .foregroundStyle(Color.accentColor)
+                .frame(width: 20)
+            Text(text)
+                .font(.subheadline)
+                .foregroundStyle(.primary)
                 .fixedSize(horizontal: false, vertical: true)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var successView: some View {
