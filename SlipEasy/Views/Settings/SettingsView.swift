@@ -58,126 +58,41 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        List {
-            // Plain inline text instead of .navigationTitle's native large
-            // title — matches WeeklyReportView's "Insights" header (same
-            // .title2/.bold styling) so the two tabs read as the same size
-            // instead of the taller system large-title font Settings used
-            // to render at.
-            Section {
+        // ScrollView + VStack instead of List — matches WeeklyReportView's
+        // structure exactly (same title styling, same freeSectionCard-style
+        // eyebrow-in-card grouping) so card widths and the spacing between
+        // them line up between the You and Insights tabs instead of
+        // following List's own row-inset rules.
+        ScrollView {
+            VStack(alignment: .leading, spacing: 24) {
                 Text(Strings.Tab.you)
                     .font(.title2)
                     .fontWeight(.bold)
-            }
-            .listRowBackground(Color.clear)
 
-            Section {
                 membershipCard
-            }
-            .listRowBackground(Color.clear)
 
-            Section(Strings.Settings.yourNumbersHeader) {
-                statsGrid
-            }
-            .listRowBackground(Color.cardFill)
-
-            Section {
-                Button {
-                    showPromise = true
-                } label: {
-                    HStack(spacing: 12) {
-                        Image(systemName: "shield.fill")
-                            .foregroundStyle(Color.accentColor)
-                        VStack(alignment: .leading, spacing: 2) {
-                            Text(Strings.Settings.promiseTitle)
-                                .foregroundStyle(.primary)
-                            Text(Strings.Settings.promiseSubtitle)
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
-                        }
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-            .listRowBackground(Color.cardFill)
-
-            Section {
-                Toggle(Strings.Settings.notificationsToggle, isOn: $notificationsEnabled)
-                    .onChange(of: notificationsEnabled) { _, newValue in
-                        if newValue {
-                            Task {
-                                let granted = await NotificationManager.requestAuthorizationAndSchedule()
-                                if !granted {
-                                    notificationsEnabled = false
-                                }
-                            }
-                        } else {
-                            NotificationManager.cancel()
-                        }
-                    }
-            } footer: {
-                Text(Strings.Settings.notificationsFooter)
-            }
-            .listRowBackground(Color.cardFill)
-
-            Section(Strings.Settings.proSectionHeader) {
-                Button {
-                    path.append(.dataExport)
-                } label: {
-                    HStack {
-                        Text(Strings.Settings.dataExportRow)
-                            .foregroundStyle(.primary)
-                        Spacer()
-                        Image(systemName: "chevron.right")
-                            .font(.caption)
-                            .foregroundStyle(.secondary)
-                    }
+                sectionCard(eyebrow: Strings.Settings.yourNumbersHeader) {
+                    statsGrid
                 }
 
-                Button {
-                    restorePurchases()
-                } label: {
-                    Text(Strings.Settings.restorePurchases)
-                }
-            }
-            .listRowBackground(Color.cardFill)
+                promiseRow
 
-            Section(Strings.Settings.legalSectionHeader) {
-                if let url = URL(string: Strings.Settings.privacyPolicyURL) {
-                    Link(destination: url) {
-                        Text(Strings.Settings.privacyPolicy)
-                    }
-                }
-                if let url = URL(string: Strings.Settings.termsOfUseURL) {
-                    Link(destination: url) {
-                        Text(Strings.Settings.termsOfUse)
-                    }
-                }
-            }
-            .listRowBackground(Color.cardFill)
+                notificationCard
 
-            Section {
-                Button {
-                    path.append(.log(outcome: .smoked, tool: nil))
-                } label: {
-                    Text(Strings.Settings.logSlipRow)
-                        .foregroundStyle(.secondary)
+                sectionCard(eyebrow: Strings.Settings.proSectionHeader) {
+                    proActions
                 }
-            }
-            .listRowBackground(Color.cardFill)
 
-            // Guaranteed clearance above the custom tab bar's floating
-            // SOS button — see Layout.tabBarClearance.
-            Section {
-                Color.clear.frame(height: Layout.tabBarClearance)
+                sectionCard(eyebrow: Strings.Settings.legalSectionHeader) {
+                    legalLinks
+                }
+
+                logSlipButton
             }
-            .listRowBackground(Color.clear)
-            .listRowSeparator(.hidden)
+            .padding(.horizontal, 24)
+            .padding(.top, 24)
+            .padding(.bottom, Layout.tabBarClearance)
         }
-        .scrollContentBackground(.hidden)
         .background(Color.appBackground.ignoresSafeArea())
         .task {
             let isAuthorized = await NotificationManager.isAuthorized()
@@ -194,6 +109,23 @@ struct SettingsView: View {
         .sheet(isPresented: $showPromise) {
             NeverResetPromiseView()
         }
+    }
+
+    // Same eyebrow-caption-inside-a-card grouping as
+    // WeeklyReportView.freeSectionCard — kept as its own copy since the two
+    // views don't otherwise share a base, but the visual language should
+    // match everywhere a card needs a small label above its content.
+    private func sectionCard<Content: View>(eyebrow: String, @ViewBuilder content: () -> Content) -> some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Text(eyebrow)
+                .font(.caption)
+                .fontWeight(.bold)
+                .foregroundStyle(.secondary)
+            content()
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(20)
+        .cardStyle()
     }
 
     private var membershipCard: some View {
@@ -229,6 +161,7 @@ struct SettingsView: View {
                 .clipShape(Capsule())
             }
         }
+        .frame(maxWidth: .infinity)
         .padding(16)
         .background(
             LinearGradient(
@@ -242,7 +175,103 @@ struct SettingsView: View {
             RoundedRectangle(cornerRadius: 20, style: .continuous)
                 .strokeBorder(Color.gold.opacity(0.3), lineWidth: 1)
         )
-        .padding(.vertical, 6)
+    }
+
+    private var promiseRow: some View {
+        Button {
+            showPromise = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "shield.fill")
+                    .foregroundStyle(Color.accentColor)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(Strings.Settings.promiseTitle)
+                        .foregroundStyle(.primary)
+                    Text(Strings.Settings.promiseSubtitle)
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.hapticPlain)
+        .padding(20)
+        .cardStyle()
+    }
+
+    private var notificationCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Toggle(Strings.Settings.notificationsToggle, isOn: $notificationsEnabled)
+                .onChange(of: notificationsEnabled) { _, newValue in
+                    if newValue {
+                        Task {
+                            let granted = await NotificationManager.requestAuthorizationAndSchedule()
+                            if !granted {
+                                notificationsEnabled = false
+                            }
+                        }
+                    } else {
+                        NotificationManager.cancel()
+                    }
+                }
+            Text(Strings.Settings.notificationsFooter)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .padding(20)
+        .cardStyle()
+    }
+
+    private var proActions: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            Button {
+                path.append(.dataExport)
+            } label: {
+                Text(Strings.Settings.dataExportRow)
+                    .foregroundStyle(Color.accentColor)
+            }
+            .buttonStyle(.hapticPlain)
+
+            Button {
+                restorePurchases()
+            } label: {
+                Text(Strings.Settings.restorePurchases)
+                    .foregroundStyle(Color.accentColor)
+            }
+            .buttonStyle(.hapticPlain)
+        }
+    }
+
+    private var legalLinks: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            if let url = URL(string: Strings.Settings.privacyPolicyURL) {
+                Link(destination: url) {
+                    Text(Strings.Settings.privacyPolicy)
+                }
+            }
+            if let url = URL(string: Strings.Settings.termsOfUseURL) {
+                Link(destination: url) {
+                    Text(Strings.Settings.termsOfUse)
+                }
+            }
+        }
+    }
+
+    private var logSlipButton: some View {
+        Button {
+            path.append(.log(outcome: .smoked, tool: nil))
+        } label: {
+            Text(Strings.Settings.logSlipRow)
+                .foregroundStyle(.secondary)
+                .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.hapticPlain)
+        .padding(20)
+        .cardStyle()
     }
 
     private var statsGrid: some View {
@@ -252,7 +281,6 @@ struct SettingsView: View {
             statTile(value: "\(beatenCount)", label: Strings.Settings.cravingsBeatenLabel, color: .purple)
             statTile(value: "\(momentum)", label: Strings.Settings.momentumLabel, color: Color.gold)
         }
-        .padding(.vertical, 8)
     }
 
     private func statTile(value: String, label: String, color: Color) -> some View {

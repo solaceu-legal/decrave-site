@@ -149,7 +149,7 @@ enum Strings {
         static let endLine2 = "That's okay — it's not supposed to disappear."
         static let endLine3 = "You just practiced having it without smoking."
         static let didntSmoke = "I didn't smoke"
-        static let smoked = "I smoked"
+        static let smoked = "I had a slip"
 
         static let breatheInPrompt = "Breathe in"
         static let holdPrompt = "Hold"
@@ -185,7 +185,7 @@ enum Strings {
         static let whyToast = "Whatever brought you here — it's still true right now."
 
         static let feelBetter = "I feel better — log it"
-        static let stillSmoked = "I smoked"
+        static let stillSmoked = "I had a slip"
     }
 
     enum Log {
@@ -331,7 +331,7 @@ enum Strings {
     }
 
     enum Settings {
-        static let logSlipRow = "I smoked — log it safely"
+        static let logSlipRow = "I had a slip — log it safely"
 
         static let freeTitle = "Free plan"
         static let freeSubtitle = "Unlimited insights, Trigger Radar & deep reports"
