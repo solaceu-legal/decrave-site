@@ -7,15 +7,14 @@ import SwiftUI
 
 /// Non-interactive last-7-days trend. Not tappable, not a full chart —
 /// full charting is explicitly out of scope for v0.1. Each bar carries
-/// its own weekday initial and count so the chart reads on its own,
-/// without relying on the card's caption to explain what's being
-/// measured.
+/// its own date and count so the chart reads on its own, without
+/// relying on the card's caption to explain what's being measured.
 struct WeeklyBarsView: View {
     let logs: [CravingLog]
 
     private struct DayCount: Identifiable {
         let id: Int
-        let weekdayLabel: String
+        let dateLabel: String
         let count: Int
     }
 
@@ -23,11 +22,15 @@ struct WeeklyBarsView: View {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let formatter = DateFormatter()
-        formatter.setLocalizedDateFormatFromTemplate("EEEEE") // narrow weekday initial: M, T, W...
+        // Locale-ordered short date (9/3 in en_US, 3/9 in en_GB) rather
+        // than a weekday letter — a repeat "T" for both Tuesday and
+        // Thursday reads fine standalone, but not as a 7-bar trend where
+        // telling two days apart at a glance is the point.
+        formatter.setLocalizedDateFormatFromTemplate("Md")
         return (0..<7).reversed().enumerated().compactMap { index, offset in
             guard let day = calendar.date(byAdding: .day, value: -offset, to: today) else { return nil }
             let count = logs.filter { calendar.isDate($0.timestamp, inSameDayAs: day) }.count
-            return DayCount(id: index, weekdayLabel: formatter.string(from: day), count: count)
+            return DayCount(id: index, dateLabel: formatter.string(from: day), count: count)
         }
     }
 
@@ -41,9 +44,11 @@ struct WeeklyBarsView: View {
                     RoundedRectangle(cornerRadius: 3)
                         .fill(day.count == 0 ? AnyShapeStyle(Color.white.opacity(0.12)) : AnyShapeStyle(LinearGradient.brand))
                         .frame(height: barHeight(for: day.count))
-                    Text(day.weekdayLabel)
+                    Text(day.dateLabel)
                         .font(.system(size: 10, weight: .semibold))
                         .foregroundStyle(.secondary)
+                        .lineLimit(1)
+                        .minimumScaleFactor(0.8)
                 }
                 .frame(maxWidth: .infinity)
             }

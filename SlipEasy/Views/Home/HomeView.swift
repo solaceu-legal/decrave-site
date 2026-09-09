@@ -105,6 +105,10 @@ struct HomeView: View {
                     )
                 }
 
+                // Not a NavigationLink to the full report anymore — that
+                // now lives in the Insights tab (see MainFlowView).
+                weeklyCard
+
                 if let recoveryAnchor {
                     bodyRecoveryCard(since: recoveryAnchor)
                 }
@@ -112,10 +116,6 @@ struct HomeView: View {
                 TriggerRadarPreviewCard(prediction: prediction, onTap: onOpenInsights)
 
                 TodaysQuestCard(onAccept: onStartQuest)
-
-                // Not a NavigationLink to the full report anymore — that
-                // now lives in the Insights tab (see MainFlowView).
-                weeklyCard
             }
             .padding(.horizontal, 20)
             .padding(.top, 24)
