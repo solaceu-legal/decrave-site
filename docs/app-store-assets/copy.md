@@ -49,9 +49,14 @@ DECRAVE PRO
 Free users get the core loop: logging, the in-the-moment tool, Momentum, and headline stats. Decrave Pro unlocks deeper insight into your own patterns — trigger-by-trigger breakdowns, peak-hour prediction, and full data export — for people who want to understand their habit, not just track it.
 
 Decrave is a wellness and habit-support tool, not a substitute for professional care. If you have questions about nicotine dependence, talk to a doctor.
+
+Terms of Use (EULA): https://www.apple.com/legal/internet-services/itunes/dev/stdeula/
+Privacy Policy: https://decrave.net/privacy-policy.html
 ```
 
-约 1450 字符，远低于 4000 上限，没有必要硬凑满。
+约 1500 字符，远低于 4000 上限，没有必要硬凑满。
+
+⚠️ **最后两行链接是必须的，不是可选装饰**——v1.0 提审第一次被拒就是因为漏了这个（Guideline 3.1.2：订阅类 App 必须在 App Store 产品页面公开信息里放服务条款链接，App 内部 Settings 页面有链接不算数，审核员看的是不下载 App 也能看到的那一层）。之前我错误地认为"App 内已经有链接就够了"，这是我的判断失误，实际必须把链接放进 Description 里才算满足要求。以后改这段描述时，务必保留这两行。
 
 ---
 
@@ -109,8 +114,10 @@ Thanks for trying it early — we'd love to hear what you think.
 - **App 功能所需数据**：无。所有烟瘾记录、目标、价格设置都只存在设备本地 SwiftData / iCloud 私有库（CloudKit），Decrave 团队自己拿不到。
 - **分析数据（TelemetryDeck）**：会收集"产品交互"类事件（如 `craving_logged`、`app_opened`），但**不含姓名、邮箱、设备广告标识符（IDFA）、IP**。ASC 问卷里对应勾选：
   - Data Type: **Product Interaction**（或 "Other Usage Data"）
+  - Data Type: **Device ID**（TelemetryDeck 用于生成不关联身份的隐私保护标识；其 SDK 隐私清单明确申报了这一项）
   - Linked to your identity: **No**
   - Used for tracking: **No**（这一点很重要，`PrivacyInfo.xcprivacy` 里 `NSPrivacyTracking` 已经是 `false`，如果 ASC 问卷选了"是用于 tracking"，会跟这个文件互相矛盾导致审核问题）
+  - App 内默认关闭；用户在 onboarding 明确同意后才开始发送，并可在 You 页随时撤回
 - **订阅/内购**：StoreKit 直连，Decrave 自己不接触也不存储支付信息，这部分数据由 Apple 处理，问卷里可以直接说明"handled by Apple"或对应勾选"Not collected by developer"。
 - **不收集**：位置、联系人、照片、健康数据（HealthKit 没用到）、精确/粗略地理位置、用户内容分享给第三方。
 

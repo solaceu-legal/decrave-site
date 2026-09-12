@@ -40,6 +40,7 @@ struct PaywallView: View {
                         } else {
                             plansSection
                             ctaButton
+                            renewalDisclosure
                             restoreButton
                             legalLinks
                         }
@@ -301,6 +302,26 @@ struct PaywallView: View {
             Text(Strings.Paywall.restorePurchases)
         }
         .buttonStyle(.hapticPlain)
+    }
+
+    @ViewBuilder
+    private var renewalDisclosure: some View {
+        if let selectedProduct, selectedProduct.subscription != nil {
+            let trial = selectedProduct.id == ProProduct.yearly.rawValue && isYearlyTrialEligible == true
+                ? trialDays(for: selectedProduct)
+                : nil
+            Text(
+                Strings.Paywall.renewalDisclosure(
+                    price: selectedProduct.displayPrice,
+                    period: periodLabel(for: selectedProduct),
+                    trialDays: trial
+                )
+            )
+            .font(.caption)
+            .foregroundStyle(.secondary)
+            .multilineTextAlignment(.center)
+            .fixedSize(horizontal: false, vertical: true)
+        }
     }
 
     private var legalLinks: some View {

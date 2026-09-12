@@ -40,9 +40,7 @@ struct SlipEasyApp: App {
     }()
 
     init() {
-        // Must happen here, not in an onAppear — TelemetryDeck needs to be
-        // ready before the first view renders.
-        Analytics.configure()
+        Analytics.configureIfConsented()
     }
 
     var body: some Scene {
@@ -53,6 +51,7 @@ struct SlipEasyApp: App {
         .modelContainer(sharedModelContainer)
         .onChange(of: scenePhase) { _, newPhase in
             if newPhase == .active {
+                Task { await StoreManager.shared.refreshPurchasedProducts() }
                 Analytics.trackAppOpened(isColdStart: !hasTrackedColdStart)
                 hasTrackedColdStart = true
             }

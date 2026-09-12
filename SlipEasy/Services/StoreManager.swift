@@ -11,6 +11,8 @@ import StoreKit
 final class StoreManager {
     static let shared = StoreManager()
 
+    private static let proProductIDs = Set(ProProduct.allCases.map(\.rawValue))
+
     private(set) var products: [Product] = []
     private(set) var purchasedProductIDs: Set<String> = []
     private(set) var isLoadingProducts = false
@@ -19,15 +21,19 @@ final class StoreManager {
     // show up here — Transaction.currentEntitlements already applies the
     // right expiry semantics for each, so there's no separate "is this a
     // subscription vs a one-time purchase" branch needed.
-    var isPro: Bool { !purchasedProductIDs.isEmpty }
+    var isPro: Bool { !purchasedProductIDs.isDisjoint(with: Self.proProductIDs) }
 
     private var transactionListenerTask: Task<Void, Never>?
 
-    private init() {
-        transactionListenerTask = listenForTransactions()
-        Task {
-            await self.loadProducts()
-            await self.refreshPurchasedProducts()
+    init(startTransactionListener: Bool = true, loadImmediately: Bool = true) {
+        if startTransactionListener {
+            transactionListenerTask = listenForTransactions()
+        }
+        if loadImmediately {
+            Task {
+                await self.loadProducts()
+                await self.refreshPurchasedProducts()
+            }
         }
     }
 
@@ -46,17 +52,11 @@ final class StoreManager {
         switch result {
         case .success(let verification):
             let transaction = try checkVerified(verification)
-            // Update from the transaction already in hand immediately —
-            // in the sandbox especially, re-querying
-            // Transaction.currentEntitlements right after a purchase can
-            // lag a few seconds behind, which left Pro content showing as
-            // locked right after a successful purchase. The refresh below
-            // still runs afterward to reconcile the full set (e.g. family
-            // sharing), but it's additive now (see refreshPurchasedProducts)
-            // so a still-lagging query can't wipe this back out.
+            // Apply the verified transaction immediately. A later lifecycle
+            // refresh reconciles the complete entitlement set and removes
+            // anything that has expired or been refunded.
             purchasedProductIDs.insert(transaction.productID)
             await transaction.finish()
-            await refreshPurchasedProducts()
             return true
         case .userCancelled, .pending:
             return false
@@ -70,25 +70,21 @@ final class StoreManager {
         await refreshPurchasedProducts()
     }
 
-    // Additive (union newly-confirmed entitlements in, subtract only
-    // ones the query positively confirms as revoked) rather than a
-    // wholesale replace — a replace here is what let a lagging
-    // Transaction.currentEntitlements query erase an entitlement
-    // `purchase(_:)` had just added from the transaction it already
-    // verified in hand.
-    private func refreshPurchasedProducts() async {
+    /// Rebuilds the entitlement cache from Apple's authoritative current
+    /// state. This must replace the cache: expired and refunded products are
+    /// intentionally absent from `currentEntitlements` and therefore cannot
+    /// be removed correctly by an additive merge.
+    func refreshPurchasedProducts() async {
         var active: Set<String> = []
-        var revoked: Set<String> = []
         for await result in Transaction.currentEntitlements {
             guard let transaction = try? checkVerified(result) else { continue }
-            if transaction.revocationDate == nil {
+            guard Self.proProductIDs.contains(transaction.productID) else { continue }
+            if transaction.revocationDate == nil,
+               transaction.expirationDate.map({ $0 > Date() }) ?? true {
                 active.insert(transaction.productID)
-            } else {
-                revoked.insert(transaction.productID)
             }
         }
-        purchasedProductIDs.formUnion(active)
-        purchasedProductIDs.subtract(revoked)
+        purchasedProductIDs = active
     }
 
     // Non-detached: inherits this class's MainActor isolation, so calls to
@@ -97,7 +93,16 @@ final class StoreManager {
         Task {
             for await result in Transaction.updates {
                 guard let transaction = try? self.checkVerified(result) else { continue }
-                await self.refreshPurchasedProducts()
+                guard Self.proProductIDs.contains(transaction.productID) else {
+                    await transaction.finish()
+                    continue
+                }
+                if transaction.revocationDate != nil ||
+                    transaction.expirationDate.map({ $0 <= Date() }) == true {
+                    self.purchasedProductIDs.remove(transaction.productID)
+                } else {
+                    self.purchasedProductIDs.insert(transaction.productID)
+                }
                 await transaction.finish()
             }
         }

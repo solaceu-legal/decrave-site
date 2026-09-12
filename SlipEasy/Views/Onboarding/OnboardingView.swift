@@ -31,22 +31,26 @@ struct OnboardingView: View {
                 OnboardingCigsPage(cigsPerDay: $cigsPerDay, onDone: { page = 3 })
                     .tag(2)
 
-                OnboardingPricePage(pricePerPack: $pricePerPack, onDone: complete)
+                OnboardingPricePage(pricePerPack: $pricePerPack, onDone: { page = 4 })
                     .tag(3)
+
+                OnboardingAnalyticsPage(onChoose: complete)
+                    .tag(4)
             }
             .tabViewStyle(.page(indexDisplayMode: .never))
             .animation(.default, value: page)
 
-            OnboardingPageIndicator(current: page, total: 4)
+            OnboardingPageIndicator(current: page, total: 5)
                 .padding(.bottom, 12)
         }
         .background(Color.appBackground.ignoresSafeArea())
     }
 
-    private func complete() {
+    private func complete(analyticsConsent: Bool) {
         onboardingStatus = selectedStatus ?? "B"
         cigsPerDayStored = Int(cigsPerDay)
         pricePerPackStored = pricePerPack
+        Analytics.setConsent(analyticsConsent)
         Analytics.trackOnboardingCompleted(status: onboardingStatus, cigsPerDay: cigsPerDayStored)
         hasCompletedOnboarding = true
     }

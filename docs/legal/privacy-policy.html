@@ -26,7 +26,7 @@
   <li><strong>Craving logs</strong> — timestamp, outcome (beaten or smoked), trigger, intensity. Stored locally on your device via Apple's SwiftData framework.</li>
   <li><strong>Reduction plan</strong> — your daily cigarette target and quit date, if you choose to set one.</li>
   <li><strong>Settings</strong> — things like your price-per-pack estimate and notification preference, stored locally via iOS's standard app-storage mechanism.</li>
-  <li><strong>Anonymous product analytics</strong> — via TelemetryDeck, which does not collect personal identifiers, IP addresses, or advertising identifiers. We use it only to understand which features are used, not who is using them.</li>
+  <li><strong>Optional anonymous product analytics</strong> — if you opt in, TelemetryDeck receives product-interaction events and a privacy-preserving device identifier used to count distinct users. These analytics are not linked to your identity and are not used for tracking or advertising. TelemetryDeck does not collect your name, email, advertising identifier, IP address, or the craving logs stored in the app.</li>
 </ul>
 <p>Features like Trigger Radar, Milestones, and the Insights charts (craving intensity, top triggers, money trajectory, peak hours) don't collect anything new — they're calculated entirely on your device from the craving logs above, and that calculation never leaves your phone.</p>
 
@@ -49,9 +49,11 @@
 
 <h2>6. Your choices</h2>
 <ul>
+  <li><strong>Analytics consent</strong> — anonymous analytics are off until you explicitly opt in during onboarding. You can withdraw or grant consent anytime from the You tab. Withdrawing consent stops future analytics collection.</li>
   <li><strong>Export</strong> — Decrave Pro lets you export everything you've logged as a CSV file at any time, for a date range you choose.</li>
   <li><strong>Delete</strong> — uninstalling the app removes all locally stored data. If iCloud sync was on, you can also delete the app's data from your iCloud account via Settings → [Your Name] → iCloud → Manage Account Storage on your iPhone.</li>
 </ul>
+<p>TelemetryDeck processes opted-in analytics on our behalf under its privacy and data-protection commitments. We use this information only to improve Decrave and require service providers handling it to provide protections consistent with this policy.</p>
 
 <h2>7. Children's privacy</h2>
 <p>Decrave carries an 18+ age rating on the App Store because of its tobacco-related content, and it isn't intended for anyone under 18. We do not knowingly collect data from anyone under 13 (or the relevant minimum age in your country).</p>

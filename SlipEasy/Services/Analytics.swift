@@ -10,6 +10,8 @@ import TelemetryDeck
 import os
 
 enum Analytics {
+    static let consentKey = "analyticsConsentGranted"
+
     private static let debugLogger = Logger(subsystem: "com.slipeasy.SlipEasy", category: "Analytics")
 
     // Get this from the TelemetryDeck Dashboard → your app → "Set Up App".
@@ -22,19 +24,30 @@ enum Analytics {
         static let lastActiveDayTracked = "analytics_lastActiveDayTracked"
     }
 
-    /// Call once, from SlipEasyApp.init() — not from a View's onAppear.
-    static func configure() {
+    static var isEnabled: Bool {
+        UserDefaults.standard.bool(forKey: consentKey)
+    }
+
+    /// Initializes analytics only after the user has explicitly opted in.
+    static func configureIfConsented() {
+        guard isEnabled else { return }
         let config = TelemetryDeck.Config(appID: appID)
         TelemetryDeck.initialize(config: config)
     }
 
+    static func setConsent(_ granted: Bool) {
+        UserDefaults.standard.set(granted, forKey: consentKey)
+        if granted {
+            configureIfConsented()
+        } else {
+            TelemetryDeck.terminate()
+        }
+    }
+
     // MARK: - Events
 
-    static func trackOnboardingCompleted(status: String, cigsPerDay: Int) {
-        track("onboarding_completed", [
-            "status": status,
-            "cigs_per_day": String(cigsPerDay)
-        ])
+    static func trackOnboardingCompleted(status _: String, cigsPerDay _: Int) {
+        track("onboarding_completed")
     }
 
     /// Call from scenePhase becoming .active. Also fires day_n_active
@@ -67,27 +80,18 @@ enum Analytics {
         ])
     }
 
-    static func trackCravingLogged(trigger: CravingTrigger?, intensity: Int) {
-        track("craving_logged", [
-            "outcome": CravingOutcome.beaten.rawValue,
-            "trigger": trigger?.rawValue ?? "",
-            "intensity": String(intensity)
-        ])
+    static func trackCravingLogged(trigger _: CravingTrigger?, intensity _: Int) {
+        track("log_created")
     }
 
-    static func trackSmokedLogged(trigger: CravingTrigger?, intensity: Int) {
-        track("smoked_logged", [
-            "trigger": trigger?.rawValue ?? "",
-            "intensity": String(intensity)
-        ])
+    static func trackSmokedLogged(trigger _: CravingTrigger?, intensity _: Int) {
+        track("log_created")
     }
 
     /// Fired when the next log (of either outcome) arrives after a smoked
     /// log — this is what answers "do they come back after a slip".
-    static func trackNextLogAfterSmoke(hoursGap: Double) {
-        track("next_log_after_smoke", [
-            "hours_gap": String(format: "%.2f", hoursGap)
-        ])
+    static func trackNextLogAfterSmoke(hoursGap _: Double) {
+        track("return_after_log")
     }
 
     // MARK: - Internals
@@ -119,6 +123,7 @@ enum Analytics {
     }
 
     private static func track(_ event: String, _ parameters: [String: String] = [:]) {
+        guard isEnabled else { return }
         #if DEBUG
         debugLogger.debug("\(event, privacy: .public) \(parameters.description, privacy: .public)")
         #endif

@@ -1,0 +1,134 @@
+{
+  "appPolicies" : {
+    "eula" : "",
+    "policies" : [
+      {
+        "locale" : "en_US",
+        "policyText" : "",
+        "policyURL" : ""
+      }
+    ]
+  },
+  "identifier" : "DECRAVE-STOREKIT-TEST",
+  "nonRenewingSubscriptions" : [],
+  "products" : [
+    {
+      "displayPrice" : "99.99",
+      "familyShareable" : false,
+      "internalID" : "DECRAVE-LIFETIME",
+      "localizations" : [
+        {
+          "description" : "Lifetime access to Decrave Pro",
+          "displayName" : "Decrave Pro Lifetime",
+          "locale" : "en_US"
+        }
+      ],
+      "productID" : "com.slipeasy.pro.lifetime",
+      "referenceName" : "Lifetime",
+      "type" : "NonConsumable"
+    }
+  ],
+  "settings" : {
+    "_askToBuyEnabled" : false,
+    "_billingGracePeriodEnabled" : false,
+    "_billingIssuesEnabled" : false,
+    "_developerTeamID" : "RA5SM99FV7",
+    "_disableDialogs" : true,
+    "_failTransactionsEnabled" : false,
+    "_locale" : "en_US",
+    "_renewalBillingIssuesEnabled" : false,
+    "_storefront" : "USA",
+    "_storeKitErrors" : [],
+    "_timeRate" : 0
+  },
+  "subscriptionGroups" : [
+    {
+      "id" : "DECRAVE-PRO-GROUP",
+      "localizations" : [],
+      "name" : "Decrave Pro",
+      "subscriptions" : [
+        {
+          "adHocOffers" : [],
+          "billingPlans" : [
+            {
+              "billingPlanType" : "BILLED_UPFRONT",
+              "commitmentDisplayPrice" : "9.99",
+              "displayPrice" : "9.99",
+              "internalID" : "DECRAVE-MONTHLY-PLAN",
+              "isEnabled" : true
+            }
+          ],
+          "codeOffers" : [],
+          "displayPrice" : "9.99",
+          "familyShareable" : false,
+          "groupNumber" : 1,
+          "internalID" : "DECRAVE-MONTHLY",
+          "introductoryOffers" : [],
+          "localizations" : [
+            {
+              "description" : "Monthly access to Decrave Pro",
+              "displayName" : "Decrave Pro Monthly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.slipeasy.pro.monthly",
+          "recurringSubscriptionPeriod" : "P1M",
+          "referenceName" : "Monthly",
+          "subscriptionGroupID" : "DECRAVE-PRO-GROUP",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : []
+        },
+        {
+          "adHocOffers" : [],
+          "billingPlans" : [
+            {
+              "billingPlanType" : "BILLED_UPFRONT",
+              "commitmentDisplayPrice" : "59.99",
+              "displayPrice" : "59.99",
+              "internalID" : "DECRAVE-YEARLY-PLAN",
+              "isEnabled" : true
+            }
+          ],
+          "codeOffers" : [],
+          "displayPrice" : "59.99",
+          "familyShareable" : false,
+          "groupNumber" : 2,
+          "internalID" : "DECRAVE-YEARLY",
+          "introductoryOffer" : {
+            "billingPlanType" : "BILLED_UPFRONT",
+            "internalID" : "DECRAVE-YEARLY-TRIAL",
+            "numberOfPeriods" : 1,
+            "paymentMode" : "free",
+            "subscriptionPeriod" : "P7D"
+          },
+          "introductoryOffers" : [
+            {
+              "billingPlanType" : "BILLED_UPFRONT",
+              "internalID" : "DECRAVE-YEARLY-TRIAL",
+              "numberOfPeriods" : 1,
+              "paymentMode" : "free",
+              "subscriptionPeriod" : "P7D"
+            }
+          ],
+          "localizations" : [
+            {
+              "description" : "Yearly access to Decrave Pro",
+              "displayName" : "Decrave Pro Yearly",
+              "locale" : "en_US"
+            }
+          ],
+          "productID" : "com.slipeasy.pro.yearly",
+          "recurringSubscriptionPeriod" : "P1Y",
+          "referenceName" : "Yearly",
+          "subscriptionGroupID" : "DECRAVE-PRO-GROUP",
+          "type" : "RecurringSubscription",
+          "winbackOffers" : []
+        }
+      ]
+    }
+  ],
+  "version" : {
+    "major" : 5,
+    "minor" : 0
+  }
+}

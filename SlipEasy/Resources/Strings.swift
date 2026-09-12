@@ -27,6 +27,11 @@ enum Strings {
         static let priceQuestion = "About how much is a pack?"
         static let priceCaption = "This is what turns every craving you beat into money back in your pocket."
         static let priceDone = "That's motivating"
+
+        static let analyticsTitle = "Help improve Decrave?"
+        static let analyticsBody = "Share anonymous usage data so we can understand which features help. TelemetryDeck receives product interactions and a privacy-preserving device identifier. It does not receive your craving logs, advertising ID, IP address, name, or email. You can change this anytime in You."
+        static let analyticsAllow = "Share anonymous analytics"
+        static let analyticsDecline = "Not now"
     }
 
     enum Home {
@@ -334,7 +339,7 @@ enum Strings {
         static let logSlipRow = "I had a slip — log it safely"
 
         static let freeTitle = "Free plan"
-        static let freeSubtitle = "Unlimited insights, Trigger Radar & deep reports"
+        static let freeSubtitle = "Core craving tools and headline stats"
         static let memberTitle = "Decrave Pro"
         static let memberSubtitle = "All features unlocked"
         static let tryProCTA = "Try Pro"
@@ -358,6 +363,9 @@ enum Strings {
 
         static let notificationsToggle = "Daily reminder"
         static let notificationsFooter = "A once-a-day nudge to check in. Off by default — you decide."
+
+        static let analyticsToggle = "Share anonymous analytics"
+        static let analyticsFooter = "Shares product interactions and a privacy-preserving device identifier with TelemetryDeck. Never includes your craving logs, name, email, IP address, or advertising ID."
 
         static let proSectionHeader = "Decrave Pro"
         static let dataExportRow = "Export your data"
@@ -417,5 +425,13 @@ enum Strings {
 
         static let purchaseErrorTitle = "Purchase failed"
         static let purchaseErrorMessage = "Something went wrong. Please try again."
+
+        static func renewalDisclosure(price: String, period: String, trialDays: Int?) -> String {
+            let charge = "\(price)\(period)"
+            if let trialDays {
+                return "\(trialDays)-day free trial, then \(charge). Auto-renews until canceled."
+            }
+            return "\(charge). Auto-renews until canceled."
+        }
     }
 }

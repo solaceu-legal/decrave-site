@@ -17,6 +17,7 @@ struct SettingsView: View {
 
     @AppStorage("pricePerPack") private var pricePerPack: Double = 8.5
     @AppStorage("notificationsEnabled") private var notificationsEnabled = false
+    @AppStorage(Analytics.consentKey) private var analyticsEnabled = false
 
     @State private var restoreResult: RestoreResult?
     @State private var showPaywall = false
@@ -78,6 +79,8 @@ struct SettingsView: View {
                 promiseRow
 
                 notificationCard
+
+                analyticsCard
 
                 sectionCard(eyebrow: Strings.Settings.proSectionHeader) {
                     proActions
@@ -219,6 +222,20 @@ struct SettingsView: View {
                     }
                 }
             Text(Strings.Settings.notificationsFooter)
+                .font(.caption)
+                .foregroundStyle(.secondary)
+        }
+        .padding(20)
+        .cardStyle()
+    }
+
+    private var analyticsCard: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            Toggle(Strings.Settings.analyticsToggle, isOn: $analyticsEnabled)
+                .onChange(of: analyticsEnabled) { _, newValue in
+                    Analytics.setConsent(newValue)
+                }
+            Text(Strings.Settings.analyticsFooter)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
