@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Privacy Policy — Decrave</title>
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#070b11">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="apple-touch-icon" href="assets/app-icon.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="site-header">
+  <div class="wrap">
+    <a class="brand" href="index.html">
+      <img class="brand-mark" src="favicon.svg" alt="" aria-hidden="true">
+      <span>Decrave</span>
+    </a>
+    <a class="btn btn-primary" href="index.html">Back to Decrave</a>
+  </div>
+</header>
+
+<main class="legal">
+  <div class="doc">
+    <h1>Privacy Policy</h1>
+    <p class="updated">Last updated: September 9, 2026</p>
+
+    <p>Decrave ("the app," "we," "us") is a wellness tool that helps people beat nicotine cravings without waiting for a formal quit date. This policy explains what data the app collects, why, and what choices you have.</p>
+
+    <h2>1. What we collect</h2>
+    <p>Decrave is built to keep as much as possible on your device:</p>
+    <ul>
+      <li><strong>Craving logs</strong> — timestamp, outcome (beaten or smoked), trigger, intensity. Stored locally on your device via Apple's SwiftData framework.</li>
+      <li><strong>Reduction plan</strong> — your daily cigarette target and quit date, if you choose to set one.</li>
+      <li><strong>Settings</strong> — things like your price-per-pack estimate and notification preference, stored locally via iOS's standard app-storage mechanism.</li>
+      <li><strong>Optional anonymous product analytics</strong> — if you opt in, TelemetryDeck receives product-interaction events and a privacy-preserving device identifier used to count distinct users. These analytics are not linked to your identity and are not used for tracking or advertising. TelemetryDeck does not collect your name, email, advertising identifier, IP address, or the craving logs stored in the app.</li>
+    </ul>
+    <p>Features like Trigger Radar, Milestones, and the Insights charts (craving intensity, top triggers, money trajectory, peak hours) don't collect anything new — they're calculated entirely on your device from the craving logs above, and that calculation never leaves your phone.</p>
+
+    <h2>2. iCloud sync</h2>
+    <p>If you're signed into iCloud, Decrave can sync your craving logs and reduction plan across your own devices using Apple's CloudKit private database. This data is stored in the private portion of your personal iCloud account — we do not have access to it, and it is never shared with other users or with us. If you're not signed into iCloud, the app works entirely offline with no loss of functionality.</p>
+
+    <h2>3. What we don't do</h2>
+    <ul>
+      <li>We don't use advertising SDKs or ad-tracking identifiers.</li>
+      <li>We don't sell or share your data with third parties for marketing purposes.</li>
+      <li>We don't read your messages, contacts, location, or any other on-device data outside what you explicitly log in the app.</li>
+      <li>We don't require an account or login — there's nothing tied to your identity on our servers, because we don't operate servers that store your personal logs.</li>
+    </ul>
+
+    <h2>4. Subscriptions</h2>
+    <p>Decrave Pro subscriptions are handled entirely through Apple's App Store (StoreKit). We never see or store your payment details — that's handled by Apple under its own privacy policy. You can manage or cancel your subscription anytime in your device's Settings app.</p>
+
+    <h2>5. Notifications</h2>
+    <p>If you turn on the optional daily reminder, it's scheduled locally on your device. We don't use a push notification server, so we never see when or whether you received it.</p>
+
+    <h2>6. Your choices</h2>
+    <ul>
+      <li><strong>Analytics consent</strong> — anonymous analytics are off until you explicitly opt in during onboarding. You can withdraw or grant consent anytime from the You tab. Withdrawing consent stops future analytics collection.</li>
+      <li><strong>Export</strong> — Decrave Pro lets you export everything you've logged as a CSV file at any time, for a date range you choose.</li>
+      <li><strong>Delete</strong> — uninstalling the app removes all locally stored data. If iCloud sync was on, you can also delete the app's data from your iCloud account via Settings → [Your Name] → iCloud → Manage Account Storage on your iPhone.</li>
+    </ul>
+    <p>TelemetryDeck processes opted-in analytics on our behalf under its privacy and data-protection commitments. We use this information only to improve Decrave and require service providers handling it to provide protections consistent with this policy.</p>
+
+    <h2>7. Children's privacy</h2>
+    <p>Decrave carries an 18+ age rating on the App Store because of its tobacco-related content, and it isn't intended for anyone under 18. We do not knowingly collect data from anyone under 13 (or the relevant minimum age in your country).</p>
+
+    <h2>8. Changes to this policy</h2>
+    <p>If this policy changes in a way that affects how your data is handled, we'll update the "Last updated" date above and, where required, notify you in the app.</p>
+
+    <h2>9. Contact</h2>
+    <p>Questions about this policy: <a href="mailto:support@decrave.net">support@decrave.net</a></p>
+
+    <p style="margin-top:48px;color:#999;font-size:13px;">Decrave is a wellness tool, not a medical device, and is not a substitute for professional medical advice.</p>
+  </div>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap">
+    <div class="cols">
+      <div>
+        <a class="brand" href="index.html">
+          <img class="brand-mark" src="favicon.svg" alt="" aria-hidden="true">
+          <span>Decrave</span>
+        </a>
+        <p class="about">A quit-smoking app for the messy, honest part before the quit date.</p>
+      </div>
+      <nav aria-label="Legal">
+        <h4>Legal &amp; support</h4>
+        <ul>
+          <li><a href="privacy-policy.html">Privacy Policy</a></li>
+          <li><a href="terms-of-service.html">Terms of Use</a></li>
+          <li><a href="support.html">Support</a></li>
+        </ul>
+      </nav>
+    </div>
+    <div class="legal-strip" style="border-top:0; padding-top:8px;">
+      <p>© 2026 Decrave.</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
