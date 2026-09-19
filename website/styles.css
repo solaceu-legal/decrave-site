@@ -1,13 +1,13 @@
 /* Decrave — shared stylesheet
-   Design language mirrors the iOS app: near-black background #070B11,
+   Design language mirrors the iOS app: deep blue-black background,
    mint → sky → violet brand gradient, coral → gold warm gradient for the
    "I want to smoke" urgent moment, abstract wind/wave motif (no tobacco
    imagery — per App Store advertising policy). */
 
 :root {
-  --bg: #070b11;
-  --bg-elevated: #0b1220;
-  --bg-deep: #05070c;
+  --bg: #0c1725;
+  --bg-elevated: #111d2d;
+  --bg-deep: #070d16;
   --card: rgba(255, 255, 255, 0.045);
   --card-elevated: rgba(255, 255, 255, 0.085);
   --stroke: rgba(255, 255, 255, 0.09);
@@ -60,8 +60,8 @@ body::before {
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(60rem 40rem at 115% -10%, rgba(156, 140, 255, 0.14), transparent 60%),
-    radial-gradient(50rem 36rem at -15% 8%, rgba(82, 197, 255, 0.12), transparent 55%),
+    radial-gradient(60rem 40rem at 115% -10%, rgba(156, 140, 255, 0.13), transparent 60%),
+    radial-gradient(50rem 36rem at -15% 8%, rgba(82, 197, 255, 0.11), transparent 55%),
     radial-gradient(40rem 30rem at 50% 120%, rgba(59, 232, 176, 0.10), transparent 60%);
 }
 
@@ -83,7 +83,7 @@ img { max-width: 100%; display: block; }
   z-index: 50;
   backdrop-filter: saturate(150%) blur(14px);
   -webkit-backdrop-filter: saturate(150%) blur(14px);
-  background: rgba(7, 11, 17, 0.72);
+  background: rgba(12, 23, 37, 0.78);
   border-bottom: 1px solid var(--stroke);
 }
 
@@ -192,6 +192,9 @@ img { max-width: 100%; display: block; }
   padding: 88px 0 72px;
   position: relative;
   overflow: hidden;
+  background:
+    radial-gradient(44rem 40rem at 82% 48%, rgba(69, 91, 120, 0.38), transparent 62%),
+    linear-gradient(180deg, rgba(20, 34, 52, 0.56) 0%, rgba(12, 23, 37, 0) 82%);
 }
 
 .hero .wrap {
@@ -258,75 +261,127 @@ img { max-width: 100%; display: block; }
   color: var(--text-dim);
 }
 
-/* Phone mockup — bare device: screenshot blends with the bezel */
+/* Phone mockup — tuned to the iPhone 17 Pro frame shown by Simulator.
+   The screenshot already contains the status bar and Dynamic Island, so the
+   CSS only draws the hardware: titanium rim, black bezel and side controls. */
 .mock {
   display: flex;
   justify-content: center;
   align-items: center;
+  position: relative;
+}
+.mock::before {
+  content: "";
+  position: absolute;
+  width: min(500px, 112%);
+  aspect-ratio: 0.76;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(105, 126, 155, 0.31) 0%, rgba(57, 78, 106, 0.18) 46%, transparent 73%);
+  filter: blur(20px);
+  pointer-events: none;
 }
 
-/* Screen ratio follows the native screenshot (1284x2778, iPhone Pro Max) */
 .iphone {
   position: relative;
   width: 100%;
   max-width: 340px;
-  border-radius: 55px;
-  padding: 8px;
-  background: #0a0b0d;
+  container-type: inline-size;
+  isolation: isolate;
+  border: 1.5px solid transparent;
+  border-radius: 19% / 9%;
+  padding: 10px;
+  background:
+    linear-gradient(#020304, #020304) padding-box,
+    linear-gradient(
+      145deg,
+      #8c8f95 0%,
+      #2c2f34 13%,
+      #111216 32%,
+      #090a0c 52%,
+      #34373c 78%,
+      #92959a 100%
+    ) border-box;
   box-shadow:
-    0 0 0 1.5px #565b64,          /* metallic rim */
-    0 0 0 2.5px rgba(255, 255, 255, 0.12),
-    0 30px 70px rgba(0, 0, 0, 0.55);
+    0 0 0 1px rgba(0, 0, 0, 0.88),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.035),
+    inset 0 0 0 3px rgba(0, 0, 0, 0.86),
+    0 32px 72px rgba(0, 0, 0, 0.58),
+    0 8px 22px rgba(0, 0, 0, 0.42);
 }
 
-/* Side buttons — protrude outside the frame, metallic */
+/* Side controls match Simulator placement: action + two volume buttons on
+   the left, one longer side button on the right. */
 .iphone::before,
 .iphone::after {
   content: "";
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 4px;
-  border-radius: 2px;
-  background: linear-gradient(90deg, #6a7078 0%, #43474e 45%, #2c2f35 100%);
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+  width: 2px;
+  background: linear-gradient(90deg, #55585e 0%, #292c31 55%, #111215 100%);
+  border: 1px solid rgba(0, 0, 0, 0.8);
 }
 .iphone::before {
+  top: 24%;
   left: -4px;
-  clip-path: inset(24% 0 56% 0); /* volume buttons */
+  height: 44px;
+  height: 13cqw;
+  border-radius: 2px 0 0 2px;
+  box-shadow: 0 55px 0 #2e3136;
+  box-shadow: 0 16cqw 0 #2e3136;
 }
 .iphone::after {
+  top: 29%;
   right: -4px;
-  clip-path: inset(38% 0 38% 0); /* power button */
+  height: 78px;
+  height: 23cqw;
+  border-radius: 0 2px 2px 0;
 }
 
-/* Action button (mute) — small extra stub above volume */
+/* Action button — the short control above the volume pair. */
 .iphone .btn-stub {
   position: absolute;
-  top: 13%;
+  top: 17.3%;
   left: -4px;
-  width: 4px;
-  height: 4.5%;
-  border-radius: 2px;
-  background: linear-gradient(90deg, #6a7078 0%, #43474e 45%, #2c2f35 100%);
-  box-shadow: 0 0 2px rgba(0, 0, 0, 0.5);
+  width: 2px;
+  height: 25px;
+  height: 7.4cqw;
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  border-radius: 2px 0 0 2px;
+  background: linear-gradient(90deg, #55585e 0%, #292c31 55%, #111215 100%);
 }
 
 .mock .iphone { width: 330px; max-width: none; }
 
 .iphone .screen {
   width: 100%;
+  /* Website captures are 1284x2778; this is within 0.5% of the native
+     1206x2622 iPhone 17 Pro ratio and avoids cropping their UI. */
   aspect-ratio: 1284 / 2778;
-  border-radius: 47px;
+  border-radius: 17% / 8%;
   overflow: hidden;
   background: #000;
   position: relative;
+  box-shadow:
+    0 0 0 2px #000,
+    0 0 0 3px rgba(255, 255, 255, 0.025),
+    inset 0 0 8px rgba(0, 0, 0, 0.72);
+}
+.iphone .screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  pointer-events: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.035),
+    inset 0 0 6px rgba(0, 0, 0, 0.7);
 }
 .iphone .screen img {
   width: 100%;
   height: 100%;
   object-fit: fill; /* container ratio == image ratio, so no distortion */
   display: block;
+  transform: translateZ(0);
 }
 
 /* Screenshot gallery */
@@ -342,6 +397,21 @@ img { max-width: 100%; display: block; }
   flex-direction: column;
   align-items: center;
   gap: 18px;
+  position: relative;
+  isolation: isolate;
+}
+.shot::before {
+  content: "";
+  position: absolute;
+  z-index: -1;
+  top: 7%;
+  width: 112%;
+  max-width: 340px;
+  aspect-ratio: 0.78;
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(94, 115, 143, 0.28) 0%, rgba(54, 74, 99, 0.15) 48%, transparent 74%);
+  filter: blur(18px);
+  pointer-events: none;
 }
 .shot .iphone { max-width: 300px; }
 .shot-cap {
@@ -355,6 +425,14 @@ img { max-width: 100%; display: block; }
 
 /* ---------- Sections ---------- */
 .section { padding: 84px 0; }
+
+.screenshots-section {
+  position: relative;
+  padding-top: 36px;
+  background:
+    radial-gradient(65rem 38rem at 50% 42%, rgba(45, 67, 94, 0.48), transparent 68%),
+    linear-gradient(180deg, transparent 0%, rgba(16, 31, 48, 0.82) 18%, rgba(16, 31, 48, 0.82) 82%, transparent 100%);
+}
 
 .section-head {
   max-width: 720px;
@@ -692,6 +770,13 @@ img { max-width: 100%; display: block; }
 .plan .btn { margin-top: auto; }
 
 .plan-fine { font-size: 13px; color: var(--text-dim); margin: 14px 0 0; text-align: center; }
+
+.pricing-region {
+  margin: 20px auto 0;
+  color: var(--text-dim);
+  font-size: 13.5px;
+  text-align: center;
+}
 
 /* Honest quote */
 .quote-band {
