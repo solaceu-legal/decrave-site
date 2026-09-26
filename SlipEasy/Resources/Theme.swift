@@ -12,15 +12,10 @@
 import SwiftUI
 
 enum Layout {
-    // Explicit, guaranteed clearance for scrollable tab content above the
-    // custom tab bar (see MainFlowView) — `.safeAreaInset` alone under-
-    // reserves space here (it only seems to count the flat row, not the
-    // floating "Decrave it" button's band above it, once a view also
-    // carries its own `.ignoresSafeArea()` background), so every
-    // scrollable tab adds this on top rather than relying on that
-    // propagation to be exact. Generous on purpose — a little extra
-    // whitespace at the bottom beats clipped content.
-    static let tabBarClearance: CGFloat = 140
+    // The custom tab bar is now a single compact row. The scroll views also
+    // need an explicit clearance because their full-bleed backgrounds ignore
+    // the safe area and would otherwise let the last card sit under the bar.
+    static let tabBarClearance: CGFloat = 88
 }
 
 extension Color {

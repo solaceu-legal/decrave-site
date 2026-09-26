@@ -10,11 +10,13 @@ struct OnboardingView: View {
     @AppStorage("onboardingStatus") private var onboardingStatus: String = ""
     @AppStorage("cigsPerDay") private var cigsPerDayStored: Int = 10
     @AppStorage("pricePerPack") private var pricePerPackStored: Double = 8.5
+    @AppStorage(MoneySettings.currencyStorageKey) private var priceCurrencyStored = MoneySettings.deviceCurrencyCode
 
     @State private var page = 0
     @State private var selectedStatus: String?
     @State private var cigsPerDay: Double = 10
-    @State private var pricePerPack: Double = 8.5
+    @State private var pricePerPack: Double = 0
+    @State private var priceCurrencyCode = MoneySettings.currencyCode
 
     var body: some View {
         // Custom dots pinned below the TabView instead of the system page
@@ -31,7 +33,7 @@ struct OnboardingView: View {
                 OnboardingCigsPage(cigsPerDay: $cigsPerDay, onDone: { page = 3 })
                     .tag(2)
 
-                OnboardingPricePage(pricePerPack: $pricePerPack, onDone: { page = 4 })
+                OnboardingPricePage(pricePerPack: $pricePerPack, currencyCode: $priceCurrencyCode, onDone: { page = 4 })
                     .tag(3)
 
                 OnboardingAnalyticsPage(onChoose: complete)
@@ -50,6 +52,7 @@ struct OnboardingView: View {
         onboardingStatus = selectedStatus ?? "B"
         cigsPerDayStored = Int(cigsPerDay)
         pricePerPackStored = pricePerPack
+        priceCurrencyStored = priceCurrencyCode
         Analytics.setConsent(analyticsConsent)
         Analytics.trackOnboardingCompleted(status: onboardingStatus, cigsPerDay: cigsPerDayStored)
         hasCompletedOnboarding = true

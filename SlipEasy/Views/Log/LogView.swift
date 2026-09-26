@@ -10,6 +10,8 @@ struct LogView: View {
     let outcome: CravingOutcome
     let tool: InterventionTool?
     @Binding var path: [AppRoute]
+    @Binding var contextTrigger: CravingTrigger?
+    var onSaved: (() -> Void)? = nil
 
     @Environment(\.modelContext) private var modelContext
 
@@ -17,6 +19,7 @@ struct LogView: View {
     private var logsByRecency: [CravingLog]
 
     @AppStorage("pricePerPack") private var pricePerPack: Double = 8.5
+    @AppStorage(MoneySettings.currencyStorageKey) private var priceCurrencyCode = MoneySettings.deviceCurrencyCode
 
     @State private var selectedTrigger: CravingTrigger?
     @State private var intensity: Double = 3
@@ -24,7 +27,7 @@ struct LogView: View {
     @State private var confettiTrigger = false
 
     private var formattedMoneyPerCraving: String {
-        InsightsEngine.formattedMoney(InsightsEngine.moneySaved(beatenCount: 1, pricePerPack: pricePerPack))
+        InsightsEngine.formattedMoney(InsightsEngine.moneySaved(beatenCount: 1, pricePerPack: pricePerPack), currencyCode: priceCurrencyCode)
     }
 
     // Scales with Dynamic Type so chips stay one word per chip instead of
@@ -85,6 +88,7 @@ struct LogView: View {
         .overlay(ConfettiView(trigger: confettiTrigger))
         .onAppear {
             if outcome == .beaten { confettiTrigger = true }
+            if selectedTrigger == nil { selectedTrigger = contextTrigger }
         }
         .navigationBarBackButtonHidden(true)
     }
@@ -174,6 +178,7 @@ struct LogView: View {
         log.intensity = Int(intensity)
         log.interventionTool = tool
         modelContext.insert(log)
+        contextTrigger = selectedTrigger
 
         if let previousLog, previousLog.outcome == .smoked {
             let hoursGap = log.timestamp.timeIntervalSince(previousLog.timestamp) / 3600
@@ -183,9 +188,19 @@ struct LogView: View {
         switch outcome {
         case .beaten:
             Analytics.trackCravingLogged(trigger: selectedTrigger, intensity: Int(intensity))
-            path.removeAll()
         case .smoked:
             Analytics.trackSmokedLogged(trigger: selectedTrigger, intensity: Int(intensity))
+        }
+
+        if let onSaved {
+            onSaved()
+            return
+        }
+
+        switch outcome {
+        case .beaten:
+            path.removeAll()
+        case .smoked:
             path.append(.relapseConfirmation)
         }
     }
@@ -193,7 +208,7 @@ struct LogView: View {
 
 #Preview {
     NavigationStack {
-        LogView(outcome: .beaten, tool: nil, path: .constant([]))
+        LogView(outcome: .beaten, tool: nil, path: .constant([]), contextTrigger: .constant(nil))
     }
     .modelContainer(for: CravingLog.self, inMemory: true)
 }

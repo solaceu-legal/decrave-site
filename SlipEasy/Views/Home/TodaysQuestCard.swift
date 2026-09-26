@@ -2,32 +2,56 @@
 //  TodaysQuestCard.swift
 //  SlipEasy
 //
-//  A single fixed daily quest matching Decrave's Home "Today's quest"
-//  module. Unlike the HTML prototype (where "Accept" just relabels the
-//  button), tapping Accept here launches the real SOS flow — the same
-//  fullScreenCover the floating "Decrave it" button opens (see
-//  MainFlowView) — so the quest leads to an actual practice session
-//  instead of a no-op tap.
+//  A small rotating daily quest matching Decrave's Home "Today's quest"
+//  module. Each assignment points to a real action and stays stable for
+//  the calendar day; completion comes from today's craving logs rather than
+//  from tapping the button alone.
 //
 
 import SwiftUI
+import SwiftData
 
 struct TodaysQuestCard: View {
-    var onAccept: () -> Void
+    var onStartQuest: (CravingTrigger?) -> Void
 
-    @AppStorage("todaysQuestAcceptedDate") private var acceptedDateString = ""
+    @Query(sort: \CravingLog.timestamp, order: .reverse)
+    private var logs: [CravingLog]
 
-    private var isAcceptedToday: Bool {
-        acceptedDateString == Self.todayKey
+    @AppStorage("dailyQuestAssignedDate") private var assignedDate = ""
+    @AppStorage("dailyQuestKind") private var assignedKindRaw = ""
+    @AppStorage("dailyQuestTrigger") private var assignedTriggerRaw = ""
+    @AppStorage("dailyQuestActionCount") private var actionCount = 0
+    @AppStorage("dailyQuestLastCompletedKey") private var lastCompletedKey = ""
+
+    private static var todayKey: String {
+        DailyQuestEngine.dayKey(for: Date())
     }
 
-    // A plain "yyyy-MM-dd" string is enough to key "already accepted
-    // today" and reset itself the next calendar day — no need for a
-    // stored Date or a new SwiftData model just for this.
-    private static var todayKey: String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd"
-        return formatter.string(from: Date())
+    private var startOfToday: Date {
+        Calendar.current.startOfDay(for: Date())
+    }
+
+    private var quest: DailyQuest {
+        let kind: DailyQuestKind
+        let trigger: CravingTrigger?
+
+        if assignedDate == Self.todayKey, let assignedKind = DailyQuestKind(rawValue: assignedKindRaw) {
+            kind = assignedKind
+            trigger = CravingTrigger(rawValue: assignedTriggerRaw)
+        } else {
+            kind = DailyQuestEngine.defaultKind(for: Date())
+            trigger = kind == .nameTrigger ? DailyQuestEngine.relevantTrigger(in: logs) : nil
+        }
+
+        return DailyQuest(kind: kind, trigger: trigger)
+    }
+
+    private var isCompleted: Bool {
+        DailyQuestEngine.isCompleted(quest, in: logs, since: startOfToday)
+    }
+
+    private var questCompletionKey: String {
+        "\(Self.todayKey):\(quest.id)"
     }
 
     var body: some View {
@@ -37,16 +61,16 @@ struct TodaysQuestCard: View {
                 .fontWeight(.bold)
                 .foregroundStyle(Color.violet)
 
-            Text(Strings.Home.questTitle)
+            Text(quest.title)
                 .font(.headline)
                 .foregroundStyle(.primary)
 
-            Text(Strings.Home.questBody)
+            Text(quest.body)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
 
             HStack {
-                Text(Strings.Home.questMomentumTag(InsightsEngine.momentumGainPerBeaten))
+                Text(Strings.Home.questActionTag)
                     .font(.system(size: 11, weight: .bold))
                     .foregroundStyle(Color.accentColor)
                     .padding(.horizontal, 10)
@@ -56,36 +80,72 @@ struct TodaysQuestCard: View {
 
                 Spacer()
 
-                Button(action: accept) {
-                    Text(isAcceptedToday ? Strings.Home.questAccepted : Strings.Home.questAccept)
+                Button(action: startQuest) {
+                    Text(isCompleted ? Strings.Home.questCompleted : quest.actionTitle)
                         .font(.caption)
                         .fontWeight(.semibold)
-                        .foregroundStyle(isAcceptedToday ? .secondary : .primary)
+                        .foregroundStyle(isCompleted ? .secondary : .primary)
                         .padding(.horizontal, 14)
                         .padding(.vertical, 8)
                         .background(Color.cardFillElevated)
                         .clipShape(Capsule())
                 }
                 .buttonStyle(.hapticPlain)
-                .disabled(isAcceptedToday)
+                .disabled(isCompleted)
             }
             .padding(.top, 4)
+
+            if actionCount > 0 {
+                Text(Strings.Home.questActionsBanked(actionCount))
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
         .cardStyle()
+        .onAppear {
+            assignQuestIfNeeded()
+            recordCompletionIfNeeded()
+            syncWidgetState()
+        }
+        .onChange(of: logs.count) { _, _ in
+            recordCompletionIfNeeded()
+            syncWidgetState()
+        }
     }
 
-    private func accept() {
-        acceptedDateString = Self.todayKey
-        onAccept()
+    private func assignQuestIfNeeded() {
+        guard assignedDate != Self.todayKey || DailyQuestKind(rawValue: assignedKindRaw) == nil else { return }
+
+        let kind = DailyQuestEngine.defaultKind(for: Date())
+        assignedDate = Self.todayKey
+        assignedKindRaw = kind.rawValue
+        assignedTriggerRaw = kind == .nameTrigger
+            ? (DailyQuestEngine.relevantTrigger(in: logs)?.rawValue ?? "")
+            : ""
+    }
+
+    private func recordCompletionIfNeeded() {
+        guard isCompleted, lastCompletedKey != questCompletionKey else { return }
+        lastCompletedKey = questCompletionKey
+        actionCount += 1
+    }
+
+    private func startQuest() {
+        onStartQuest(quest.trigger)
+    }
+
+    private func syncWidgetState() {
+        WidgetSyncService.sync(quest: quest, isCompleted: isCompleted, logs: logs)
     }
 }
 
 #Preview {
     VStack(spacing: 12) {
-        TodaysQuestCard(onAccept: {})
+        TodaysQuestCard(onStartQuest: { _ in })
     }
     .padding()
     .background(Color.appBackground)
+    .modelContainer(for: CravingLog.self, inMemory: true)
 }

@@ -10,12 +10,12 @@ enum ProProduct: String, CaseIterable {
     case yearly = "com.slipeasy.pro.yearly"
     case lifetime = "com.slipeasy.pro.lifetime"
 
-    // Only shown if a product's ASC display name fails to load.
+    // In-app language can differ from the App Store account's language.
     var fallbackLabel: String {
         switch self {
-        case .monthly: "Monthly"
-        case .yearly: "Yearly"
-        case .lifetime: "Lifetime"
+        case .monthly: Strings.Paywall.monthlyPlan
+        case .yearly: Strings.Paywall.yearlyPlan
+        case .lifetime: Strings.Paywall.lifetimePlan
         }
     }
 }

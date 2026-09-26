@@ -9,7 +9,7 @@ import SwiftData
 struct HomeView: View {
     @Binding var path: [AppRoute]
     var onOpenInsights: () -> Void = {}
-    var onStartQuest: () -> Void = {}
+    var onStartQuest: (CravingTrigger?) -> Void = { _ in }
 
     @Environment(\.modelContext) private var modelContext
 
@@ -30,6 +30,7 @@ struct HomeView: View {
 
     @AppStorage("onboardingStatus") private var onboardingStatus: String = ""
     @AppStorage("pricePerPack") private var pricePerPack: Double = 8.5
+    @AppStorage(MoneySettings.currencyStorageKey) private var priceCurrencyCode = MoneySettings.deviceCurrencyCode
 
     @State private var activeSheet: HomeSheet?
 
@@ -58,17 +59,11 @@ struct HomeView: View {
     }
 
     private var formattedMoneySaved: String {
-        InsightsEngine.formattedMoneyCompact(moneySaved)
+        InsightsEngine.formattedMoney(moneySaved, currencyCode: priceCurrencyCode)
     }
 
     private var timeReclaimedText: String {
-        let totalMinutes = beatenCount * Self.minutesPerCigarette
-        let hours = totalMinutes / 60
-        let minutes = totalMinutes % 60
-        if hours > 0 {
-            return "\(hours)h \(minutes)m"
-        }
-        return "\(minutes)m"
+        Strings.Home.reclaimedDuration(totalMinutes: beatenCount * Self.minutesPerCigarette)
     }
 
     // "Time since last cigarette" is a separate, resettable clock from
@@ -85,7 +80,7 @@ struct HomeView: View {
 
     private var allLogSummaries: [LogSummary] {
         (beatenLogs + smokedLogs).map {
-            LogSummary(timestamp: $0.timestamp, outcome: $0.outcome, trigger: $0.trigger, usedIntervention: $0.interventionTool != nil)
+            LogSummary(timestamp: $0.timestamp, outcome: $0.outcome, trigger: $0.trigger, usedIntervention: $0.interventionTool != nil, interventionTool: $0.interventionTool)
         }
     }
 
@@ -109,8 +104,8 @@ struct HomeView: View {
                     )
                 }
 
-                // Not a NavigationLink to the full report anymore — that
-                // now lives in the Insights tab (see MainFlowView).
+                // The full report now lives in the Progress tab (see
+                // MainFlowView); this card stays a compact home summary.
                 weeklyCard
 
                 if let recoveryAnchor {
@@ -119,7 +114,7 @@ struct HomeView: View {
 
                 TriggerRadarPreviewCard(prediction: prediction, onTap: onOpenInsights)
 
-                TodaysQuestCard(onAccept: onStartQuest)
+                TodaysQuestCard(onStartQuest: onStartQuest)
             }
             .padding(.horizontal, 20)
             .padding(.top, 24)

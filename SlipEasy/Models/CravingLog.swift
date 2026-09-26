@@ -24,13 +24,28 @@ enum CravingTrigger: String, CaseIterable, Identifiable {
 
     var label: String {
         switch self {
-        case .coffee: return "Coffee"
-        case .meal: return "Meal"
-        case .stress: return "Stress"
-        case .alcohol: return "Alcohol"
-        case .breakTime: return "Break"
-        case .boredom: return "Boredom"
-        case .other: return "Other"
+        case .coffee: return localized("Coffee", simplifiedChinese: "咖啡", traditionalChinese: "咖啡", german: "Kaffee", french: "Café", italian: "Caffè", spanish: "Café", portuguese: "Café", japanese: "コーヒー", korean: "커피")
+        case .meal: return localized("Meal", simplifiedChinese: "饭后", traditionalChinese: "飯後", german: "Nach dem Essen", french: "Repas", italian: "Dopo il pasto", spanish: "Después de comer", portuguese: "Depois de comer", japanese: "食後", korean: "식사 후")
+        case .stress: return localized("Stress", simplifiedChinese: "压力", traditionalChinese: "壓力", german: "Stress", french: "Stress", italian: "Stress", spanish: "Estrés", portuguese: "Estresse", japanese: "ストレス", korean: "스트레스")
+        case .alcohol: return localized("Alcohol", simplifiedChinese: "酒后", traditionalChinese: "酒後", german: "Alkohol", french: "Alcool", italian: "Alcol", spanish: "Alcohol", portuguese: "Álcool", japanese: "飲酒", korean: "술자리")
+        case .breakTime: return localized("Break", simplifiedChinese: "休息时", traditionalChinese: "休息時", german: "Pause", french: "Pause", italian: "Pausa", spanish: "Descanso", portuguese: "Pausa", japanese: "休憩", korean: "휴식")
+        case .boredom: return localized("Boredom", simplifiedChinese: "无聊", traditionalChinese: "無聊", german: "Langeweile", french: "Ennui", italian: "Noia", spanish: "Aburrimiento", portuguese: "Tédio", japanese: "退屈", korean: "지루함")
+        case .other: return localized("Other", simplifiedChinese: "其他", traditionalChinese: "其他", german: "Andere", french: "Autre", italian: "Altro", spanish: "Otro", portuguese: "Outro", japanese: "その他", korean: "기타")
+        }
+    }
+
+    private func localized(_ english: String, simplifiedChinese: String, traditionalChinese: String, german: String, french: String, italian: String, spanish: String, portuguese: String, japanese: String, korean: String) -> String {
+        switch AppLanguage.current.effective {
+        case .simplifiedChinese: simplifiedChinese
+        case .traditionalChinese: traditionalChinese
+        case .german: german
+        case .french: french
+        case .italian: italian
+        case .spanish: spanish
+        case .portuguese: portuguese
+        case .japanese: japanese
+        case .korean: korean
+        default: english
         }
     }
 

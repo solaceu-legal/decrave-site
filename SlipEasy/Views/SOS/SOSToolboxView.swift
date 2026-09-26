@@ -37,7 +37,7 @@ struct SOSToolboxView: View {
 
                     footerButtons
                 }
-                .padding(.top, 24)
+                .padding(.top, 48)
                 .frame(minHeight: geometry.size.height)
             }
         }
@@ -77,7 +77,7 @@ struct SOSToolboxView: View {
                 if let delayEndDate {
                     TimelineView(.periodic(from: .now, by: 1)) { context in
                         let remaining = max(0, Int(delayEndDate.timeIntervalSince(context.date)))
-                        Text(remaining > 0 ? "\(remaining / 60):\(String(format: "%02d", remaining % 60)) left" : Strings.SOS.delayDone)
+                        Text(remaining > 0 ? "\(remaining / 60):\(String(format: "%02d", remaining % 60))" : Strings.SOS.delayDone)
                             .font(.caption)
                             .foregroundStyle(.secondary)
                             .lineLimit(1)

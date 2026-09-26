@@ -44,8 +44,8 @@ struct PeakHoursChart: View {
         } else {
             Chart(hourlyCounts) { item in
                 BarMark(
-                    x: .value("Hour", item.hour),
-                    y: .value("Count", item.count)
+                    x: .value(Strings.Report.chartHour, item.hour),
+                    y: .value(Strings.Report.chartCount, item.count)
                 )
                 .foregroundStyle(LinearGradient.brand)
                 // Skips zero-count hours — labeling all 24 bars would be
@@ -79,7 +79,8 @@ struct PeakHoursChart: View {
         components.hour = hour
         let date = Calendar.current.date(from: components) ?? Date()
         let formatter = DateFormatter()
-        formatter.dateFormat = "h a"
+        formatter.locale = AppLanguage.current.locale
+        formatter.setLocalizedDateFormatFromTemplate("jm")
         return formatter.string(from: date)
     }
 }

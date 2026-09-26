@@ -11,4 +11,5 @@ enum AppRoute: Hashable {
     case log(outcome: CravingOutcome, tool: InterventionTool?)
     case relapseConfirmation
     case dataExport
+    case settings
 }

@@ -71,7 +71,8 @@ struct TriggerRadarPreviewCard: View {
 
     private func subtitle(for window: InsightsEngine.PredictedWindow) -> String {
         if let trigger = window.trigger {
-            return Strings.Home.triggerRadarTriggerNote(trigger: trigger.label.lowercased(), occurrences: window.occurrences)
+            let label = AppLanguage.current.effective == .german ? trigger.label : trigger.label.lowercased()
+            return Strings.Home.triggerRadarTriggerNote(trigger: label, occurrences: window.occurrences)
         }
         return Strings.Home.triggerRadarOccurrenceNote(occurrences: window.occurrences)
     }

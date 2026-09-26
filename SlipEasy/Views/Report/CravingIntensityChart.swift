@@ -35,6 +35,7 @@ struct CravingIntensityChart: View {
         guard let monday = calendar.date(byAdding: .day, value: -daysSinceMonday, to: today) else { return [] }
 
         let formatter = DateFormatter()
+        formatter.locale = AppLanguage.current.locale
         formatter.setLocalizedDateFormatFromTemplate("EEEEE") // narrow weekday initial: M, T, W...
         return (0..<7).compactMap { offset in
             guard let day = calendar.date(byAdding: .day, value: offset, to: monday) else { return nil }
@@ -79,7 +80,7 @@ struct CravingIntensityChart: View {
     // since intensity itself is never actually 0.
     private func valueLabel(for intensity: Double) -> String {
         guard intensity > 0 else { return "0" }
-        return String(format: "%.1f", intensity)
+        return intensity.formatted(.number.precision(.fractionLength(1)).locale(AppLanguage.current.locale))
     }
 
     private func barHeight(for intensity: Double) -> CGFloat {

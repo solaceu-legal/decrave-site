@@ -22,6 +22,7 @@ struct WeeklyBarsView: View {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: Date())
         let formatter = DateFormatter()
+        formatter.locale = AppLanguage.current.locale
         // Locale-ordered short date (9/3 in en_US, 3/9 in en_GB) rather
         // than a weekday letter — a repeat "T" for both Tuesday and
         // Thursday reads fine standalone, but not as a 7-bar trend where

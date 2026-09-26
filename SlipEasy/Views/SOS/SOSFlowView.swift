@@ -3,34 +3,46 @@
 //  SlipEasy
 //
 //  Hosts the entire craving-rescue flow behind the floating SOS button:
-//  breathing (default) → optionally Urge Surfing → optionally the
-//  toolbox → logging the outcome. Owns its own navigation stack so it's
+//  context → recommended or saved tool → optionally the toolbox → logging
+//  the outcome. Owns its own navigation stack so it's
 //  independent of whichever tab was showing when it was opened.
 //
-//  Every screen inside still calls `path.removeAll()` to mean "I'm
-//  done" (that convention predates this flow living in its own sheet —
-//  see LogView, RelapseConfirmationView, InterventionView.exitEarly).
-//  Rather than rewiring all of those, this view just treats path
-//  going from non-empty back to empty as the signal to dismiss the
-//  whole cover back to whichever tab was showing underneath.
+//  Completed logging clears the route path to return to the tab underneath.
+//  Leaving an exercise is different: it removes only that exercise route so
+//  the SOS choice screen remains open.
 //
 
 import SwiftUI
 import SwiftData
 
 struct SOSFlowView: View {
+    let initialTrigger: CravingTrigger?
     @Environment(\.dismiss) private var dismiss
     @State private var path: [AppRoute] = []
+    @State private var contextTrigger: CravingTrigger?
+
+    init(initialTrigger: CravingTrigger? = nil) {
+        self.initialTrigger = initialTrigger
+        _contextTrigger = State(initialValue: initialTrigger)
+    }
 
     var body: some View {
         NavigationStack(path: $path) {
-            InterventionView(tool: .breathing, path: $path)
+            SOSStartView(path: $path, contextTrigger: $contextTrigger)
                 .navigationDestination(for: AppRoute.self) { route in
                     destination(for: route)
                 }
         }
         .onChange(of: path) { old, new in
-            if new.isEmpty && !old.isEmpty {
+            let completedLogging = old.contains { route in
+                switch route {
+                case .log, .relapseConfirmation:
+                    true
+                default:
+                    false
+                }
+            }
+            if new.isEmpty && completedLogging {
                 dismiss()
             }
         }
@@ -44,11 +56,13 @@ struct SOSFlowView: View {
         case .toolbox:
             SOSToolboxView(path: $path)
         case .log(let outcome, let tool):
-            LogView(outcome: outcome, tool: tool, path: $path)
+            LogView(outcome: outcome, tool: tool, path: $path, contextTrigger: $contextTrigger)
         case .relapseConfirmation:
             RelapseConfirmationView(path: $path)
         case .dataExport:
             EmptyView() // unreachable — that route belongs to the You/Settings stack, not this flow
+        case .settings:
+            EmptyView() // unreachable — settings belongs to the Progress navigation stack
         }
     }
 }

@@ -12,7 +12,6 @@ import SwiftUI
 struct Milestone {
     let threshold: Int
     let icon: String
-    let label: String
     let tier: MedalTier
 }
 
@@ -68,16 +67,16 @@ enum MedalTier {
 
 enum Milestones {
     static let all: [Milestone] = [
-        Milestone(threshold: 10, icon: "flame.fill", label: "10 beaten", tier: .bronze),
-        Milestone(threshold: 25, icon: "bolt.fill", label: "25 beaten", tier: .bronze),
-        Milestone(threshold: 50, icon: "star.fill", label: "50 beaten", tier: .silver),
-        Milestone(threshold: 100, icon: "crown.fill", label: "100 beaten", tier: .silver),
-        Milestone(threshold: 200, icon: "rosette", label: "200 beaten", tier: .silver),
-        Milestone(threshold: 500, icon: "medal.fill", label: "500 beaten", tier: .gold),
-        Milestone(threshold: 1000, icon: "trophy.fill", label: "1,000 beaten", tier: .gold),
-        Milestone(threshold: 2000, icon: "shield.fill", label: "2,000 beaten", tier: .prestige),
-        Milestone(threshold: 5000, icon: "sparkles", label: "5,000 beaten", tier: .prestige),
-        Milestone(threshold: 10000, icon: "infinity", label: "10,000 beaten", tier: .prestige)
+        Milestone(threshold: 10, icon: "flame.fill", tier: .bronze),
+        Milestone(threshold: 25, icon: "bolt.fill", tier: .bronze),
+        Milestone(threshold: 50, icon: "star.fill", tier: .silver),
+        Milestone(threshold: 100, icon: "crown.fill", tier: .silver),
+        Milestone(threshold: 200, icon: "rosette", tier: .silver),
+        Milestone(threshold: 500, icon: "medal.fill", tier: .gold),
+        Milestone(threshold: 1000, icon: "trophy.fill", tier: .gold),
+        Milestone(threshold: 2000, icon: "shield.fill", tier: .prestige),
+        Milestone(threshold: 5000, icon: "sparkles", tier: .prestige),
+        Milestone(threshold: 10000, icon: "infinity", tier: .prestige)
     ]
 }
 
@@ -127,7 +126,7 @@ struct MilestonesRow: View {
             .frame(width: 56, height: 56)
             .shadow(color: reached ? Color.black.opacity(0.35) : .clear, radius: 4, y: 2)
 
-            Text(milestone.label)
+            Text(Strings.Report.milestoneLabel(milestone.threshold))
                 .font(.system(size: 10, weight: .semibold))
                 .foregroundStyle(reached ? .primary : .secondary)
         }

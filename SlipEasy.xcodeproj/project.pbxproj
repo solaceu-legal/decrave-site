@@ -9,14 +9,17 @@
 /* Begin PBXBuildFile section */
 		0065693E3030BACE00701EAC /* TelemetryClient in Frameworks */ = {isa = PBXBuildFile; productRef = 0065693D3030BACE00701EAC /* TelemetryClient */; };
 		006569403030BACE00701EAC /* TelemetryDeck in Frameworks */ = {isa = PBXBuildFile; productRef = 0065693F3030BACE00701EAC /* TelemetryDeck */; };
+		B1000000000000000000000C /* DecraveWidget.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = B10000000000000000000001 /* DecraveWidget.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
-/* Begin PBXFileReference section */
-		00E7C17E3030A9F2000BAA26 /* SlipEasy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SlipEasy.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		F10000000000000000000001 /* SlipEasyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SlipEasyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-/* End PBXFileReference section */
-
 /* Begin PBXContainerItemProxy section */
+		B1000000000000000000000E /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 00E7C1763030A9F2000BAA26 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B10000000000000000000003;
+			remoteInfo = DecraveWidget;
+		};
 		F1000000000000000000000A /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 00E7C1763030A9F2000BAA26 /* Project object */;
@@ -26,6 +29,26 @@
 		};
 /* End PBXContainerItemProxy section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		B1000000000000000000000D /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				B1000000000000000000000C /* DecraveWidget.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		00E7C17E3030A9F2000BAA26 /* SlipEasy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SlipEasy.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B10000000000000000000001 /* DecraveWidget.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = DecraveWidget.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		F10000000000000000000001 /* SlipEasyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SlipEasyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
 		00F5A2FE303BEAFC00F58B91 /* Exceptions for "SlipEasy" folder in "SlipEasy" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
@@ -33,6 +56,13 @@
 				Info.plist,
 			);
 			target = 00E7C17D3030A9F2000BAA26 /* SlipEasy */;
+		};
+		B1000000000000000000000B /* Exceptions for "DecraveWidget" folder in "DecraveWidget" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = B10000000000000000000003 /* DecraveWidget */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -43,6 +73,14 @@
 				00F5A2FE303BEAFC00F58B91 /* Exceptions for "SlipEasy" folder in "SlipEasy" target */,
 			);
 			path = SlipEasy;
+			sourceTree = "<group>";
+		};
+		B10000000000000000000002 /* DecraveWidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				B1000000000000000000000B /* Exceptions for "DecraveWidget" folder in "DecraveWidget" target */,
+			);
+			path = DecraveWidget;
 			sourceTree = "<group>";
 		};
 		F10000000000000000000002 /* SlipEasyTests */ = {
@@ -62,6 +100,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B10000000000000000000004 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F10000000000000000000003 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -77,6 +122,7 @@
 			children = (
 				00E7C1803030A9F2000BAA26 /* SlipEasy */,
 				F10000000000000000000002 /* SlipEasyTests */,
+				B10000000000000000000002 /* DecraveWidget */,
 				00E7C17F3030A9F2000BAA26 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -86,6 +132,7 @@
 			children = (
 				00E7C17E3030A9F2000BAA26 /* SlipEasy.app */,
 				F10000000000000000000001 /* SlipEasyTests.xctest */,
+				B10000000000000000000001 /* DecraveWidget.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -100,10 +147,12 @@
 				00E7C17A3030A9F2000BAA26 /* Sources */,
 				00E7C17B3030A9F2000BAA26 /* Frameworks */,
 				00E7C17C3030A9F2000BAA26 /* Resources */,
+				B1000000000000000000000D /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				B1000000000000000000000F /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				00E7C1803030A9F2000BAA26 /* SlipEasy */,
@@ -116,6 +165,28 @@
 			productName = SlipEasy;
 			productReference = 00E7C17E3030A9F2000BAA26 /* SlipEasy.app */;
 			productType = "com.apple.product-type.application";
+		};
+		B10000000000000000000003 /* DecraveWidget */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B10000000000000000000007 /* Build configuration list for PBXNativeTarget "DecraveWidget" */;
+			buildPhases = (
+				B10000000000000000000006 /* Sources */,
+				B10000000000000000000004 /* Frameworks */,
+				B10000000000000000000005 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				B10000000000000000000002 /* DecraveWidget */,
+			);
+			name = DecraveWidget;
+			packageProductDependencies = (
+			);
+			productName = DecraveWidget;
+			productReference = B10000000000000000000001 /* DecraveWidget.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 		F10000000000000000000006 /* SlipEasyTests */ = {
 			isa = PBXNativeTarget;
@@ -153,6 +224,9 @@
 					00E7C17D3030A9F2000BAA26 = {
 						CreatedOnToolsVersion = 26.6;
 					};
+					B10000000000000000000003 = {
+						CreatedOnToolsVersion = 26.6;
+					};
 					F10000000000000000000006 = {
 						CreatedOnToolsVersion = 26.6;
 						TestTargetID = 00E7C17D3030A9F2000BAA26;
@@ -178,12 +252,20 @@
 			targets = (
 				00E7C17D3030A9F2000BAA26 /* SlipEasy */,
 				F10000000000000000000006 /* SlipEasyTests */,
+				B10000000000000000000003 /* DecraveWidget */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
 		00E7C17C3030A9F2000BAA26 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B10000000000000000000005 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -207,6 +289,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		B10000000000000000000006 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F10000000000000000000005 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -217,6 +306,11 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		B1000000000000000000000F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = B10000000000000000000003 /* DecraveWidget */;
+			targetProxy = B1000000000000000000000E /* PBXContainerItemProxy */;
+		};
 		F1000000000000000000000B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 00E7C17D3030A9F2000BAA26 /* SlipEasy */;
@@ -353,7 +447,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SlipEasy/SlipEasy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = RA5SM99FV7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -368,7 +462,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.xhwang.SlipEasy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -388,7 +482,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = SlipEasy/SlipEasy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 2;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = RA5SM99FV7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -403,7 +497,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.xhwang.SlipEasy;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
@@ -416,16 +510,66 @@
 			};
 			name = Release;
 		};
+		B10000000000000000000008 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = DecraveWidget/DecraveWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = RA5SM99FV7;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DecraveWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xhwang.SlipEasy.DecraveWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		B10000000000000000000009 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = DecraveWidget/DecraveWidget.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = RA5SM99FV7;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = DecraveWidget/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.1;
+				PRODUCT_BUNDLE_IDENTIFIER = com.xhwang.SlipEasy.DecraveWidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
 		F10000000000000000000008 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = RA5SM99FV7;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.xhwang.SlipEasyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -442,11 +586,11 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = RA5SM99FV7;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 1.0;
+				MARKETING_VERSION = 1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.xhwang.SlipEasyTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
@@ -474,6 +618,15 @@
 			buildConfigurations = (
 				00E7C18C3030A9F3000BAA26 /* Debug */,
 				00E7C18D3030A9F3000BAA26 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B10000000000000000000007 /* Build configuration list for PBXNativeTarget "DecraveWidget" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B10000000000000000000008 /* Debug */,
+				B10000000000000000000009 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -72,6 +72,10 @@ enum Analytics {
         track("intervention_started", ["tool_type": toolType])
     }
 
+    static func trackSOSOpened(source: String) {
+        track("sos_opened", ["source": source])
+    }
+
     static func trackInterventionCompleted(durationSec: Int, exitedEarly: Bool, toolType: String) {
         track("intervention_completed", [
             "duration_sec": String(durationSec),

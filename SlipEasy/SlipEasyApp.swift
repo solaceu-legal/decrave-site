@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import AppIntents
 
 @main
 struct SlipEasyApp: App {
@@ -40,7 +41,10 @@ struct SlipEasyApp: App {
     }()
 
     init() {
+        MoneySettings.preserveExistingCurrency()
         Analytics.configureIfConsented()
+        DecraveShortcuts.updateAppShortcutParameters()
+        NotificationManager.configure()
     }
 
     var body: some Scene {

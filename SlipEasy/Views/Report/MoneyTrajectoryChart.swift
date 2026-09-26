@@ -12,15 +12,15 @@ struct MoneyTrajectoryChart: View {
     var body: some View {
         Chart(points) { point in
             AreaMark(
-                x: .value("Month", point.month),
-                y: .value("Saved", point.cumulativeSaved)
+                x: .value(Strings.Report.chartMonthAxis, point.month),
+                y: .value(Strings.Report.chartSavedAxis, point.cumulativeSaved)
             )
             .foregroundStyle(LinearGradient.brand.opacity(0.15))
             .interpolationMethod(.catmullRom)
 
             LineMark(
-                x: .value("Month", point.month),
-                y: .value("Saved", point.cumulativeSaved)
+                x: .value(Strings.Report.chartMonthAxis, point.month),
+                y: .value(Strings.Report.chartSavedAxis, point.cumulativeSaved)
             )
             .foregroundStyle(LinearGradient.brand)
             .interpolationMethod(.catmullRom)
@@ -29,7 +29,7 @@ struct MoneyTrajectoryChart: View {
             AxisMarks(values: [0, (points.count - 1)]) { value in
                 AxisValueLabel {
                     if let month = value.as(Int.self) {
-                        Text(month == 0 ? "Now" : "\(month) mo")
+                        Text(month == 0 ? Strings.Report.chartNow : Strings.Report.chartMonth(month))
                     }
                 }
             }

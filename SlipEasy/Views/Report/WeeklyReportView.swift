@@ -2,8 +2,8 @@
 //  WeeklyReportView.swift
 //  SlipEasy
 //
-//  Free tier gets Craving intensity, Top triggers, Money trajectory, and
-//  Milestones; the interpretive/predictive layer (pattern insights,
+//  Free tier gets Craving intensity, Top triggers, a simple next move, Money
+//  trajectory, and Milestones; the interpretive/predictive layer (pattern insights,
 //  Trigger Radar detail) is Pro. Each Pro section gates itself
 //  individually via ProLockedSection rather than the whole page going
 //  behind one lock (see DataExportView for the page-level equivalent,
@@ -14,8 +14,12 @@ import SwiftUI
 import SwiftData
 
 struct WeeklyReportView: View {
+    var onStartSOS: (CravingTrigger?) -> Void = { _ in }
+    var showsHeader: Bool = true
+
     @Query(sort: \CravingLog.timestamp) private var allLogs: [CravingLog]
     @AppStorage("pricePerPack") private var pricePerPack: Double = 8.5
+    @AppStorage(MoneySettings.currencyStorageKey) private var priceCurrencyCode = MoneySettings.deviceCurrencyCode
 
     // Same "last 7 days including today" window as WeeklyBarsView on Home,
     // computed the same way (filter in Swift, not a dynamic SwiftData
@@ -36,11 +40,11 @@ struct WeeklyReportView: View {
     }
 
     private var weekLogSummaries: [LogSummary] {
-        weekLogs.map { LogSummary(timestamp: $0.timestamp, outcome: $0.outcome, trigger: $0.trigger, usedIntervention: $0.interventionTool != nil) }
+        weekLogs.map { LogSummary(timestamp: $0.timestamp, outcome: $0.outcome, trigger: $0.trigger, usedIntervention: $0.interventionTool != nil, interventionTool: $0.interventionTool) }
     }
 
     private var allLogSummaries: [LogSummary] {
-        allLogs.map { LogSummary(timestamp: $0.timestamp, outcome: $0.outcome, trigger: $0.trigger, usedIntervention: $0.interventionTool != nil) }
+        allLogs.map { LogSummary(timestamp: $0.timestamp, outcome: $0.outcome, trigger: $0.trigger, usedIntervention: $0.interventionTool != nil, interventionTool: $0.interventionTool) }
     }
 
     private var triggerInsight: InsightsEngine.TriggerPatternInsight? {
@@ -53,6 +57,18 @@ struct WeeklyReportView: View {
 
     private var triggerBreakdown: [InsightsEngine.TriggerBreakdown] {
         InsightsEngine.triggerBreakdown(in: weekLogSummaries)
+    }
+
+    private var commonTriggerInsight: InsightsEngine.TriggerPatternInsight? {
+        InsightsEngine.mostCommonTrigger(in: allLogSummaries)
+    }
+
+    private var strongestPairing: (trigger: CravingTrigger, recommendation: InsightsEngine.InterventionRecommendation)? {
+        guard let triggerInsight = commonTriggerInsight,
+              let recommendation = InsightsEngine.recommendedIntervention(for: triggerInsight.trigger, in: allLogSummaries) else {
+            return nil
+        }
+        return (triggerInsight.trigger, recommendation)
     }
 
     // Deliberately the same weekLogSummaries (not all-time) — the card's
@@ -83,14 +99,16 @@ struct WeeklyReportView: View {
 
     var body: some View {
         ScrollView {
-            // Free charts first (Craving intensity → Top triggers → Money
-            // trajectory → Milestones), locked previews last — mirrors
+            // Free charts first (Craving intensity → Top triggers → next move
+            // → Money trajectory → Milestones), locked previews last — mirrors
             // Decrave's own Insights page order.
             VStack(alignment: .leading, spacing: 24) {
-                Text(Strings.Report.title)
-                    .font(.title2)
-                    .fontWeight(.bold)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                if showsHeader {
+                    Text(Strings.Report.title)
+                        .font(.title2)
+                        .fontWeight(.bold)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                }
 
                 freeSectionCard(eyebrow: Strings.Report.cravingIntensityEyebrow) {
                     cravingIntensitySection
@@ -98,6 +116,10 @@ struct WeeklyReportView: View {
 
                 freeSectionCard(eyebrow: Strings.Report.topTriggersEyebrow) {
                     TopTriggersRows(breakdown: triggerBreakdown)
+                }
+
+                freeSectionCard(eyebrow: Strings.Report.nextMoveEyebrow) {
+                    personalPatternSection
                 }
 
                 freeSectionCard(eyebrow: Strings.Report.moneyTrajectoryTitle) {
@@ -177,7 +199,7 @@ struct WeeklyReportView: View {
 
     @ViewBuilder
     private var insightsSection: some View {
-        if triggerInsight == nil && toolInsight == nil {
+        if triggerInsight == nil && toolInsight == nil && strongestPairing == nil {
             Text(Strings.Report.notEnoughData)
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
@@ -204,7 +226,58 @@ struct WeeklyReportView: View {
                         suggestion: triggerSuggestion(for: triggerInsight)
                     )
                 }
+                if let strongestPairing {
+                    InsightCard(
+                        icon: "arrow.forward.circle.fill",
+                        title: Strings.Insights.strongestPairingTitle,
+                        message: Strings.Insights.strongestPairingBody(
+                            trigger: strongestPairing.trigger,
+                            tool: strongestPairing.recommendation.tool.title,
+                            beatenCount: strongestPairing.recommendation.beatenCount,
+                            attemptCount: strongestPairing.recommendation.attemptCount
+                        )
+                    )
+                }
             }
+        }
+    }
+
+    @ViewBuilder
+    private var personalPatternSection: some View {
+        if let commonTriggerInsight {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(alignment: .top, spacing: 12) {
+                    Image(systemName: "scope")
+                        .font(.title3)
+                        .foregroundStyle(Color.accentColor)
+                        .frame(width: 24)
+
+                    VStack(alignment: .leading, spacing: 6) {
+                        Text(Strings.Insights.commonTriggerTitle)
+                            .font(.subheadline)
+                            .fontWeight(.semibold)
+                        Text(Strings.Insights.commonTriggerBody(
+                            trigger: commonTriggerInsight.trigger,
+                            count: commonTriggerInsight.count
+                        ))
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                    }
+                }
+
+                Button {
+                    onStartSOS(commonTriggerInsight.trigger)
+                } label: {
+                    Label(Strings.Home.questTriggerCTA, systemImage: "bolt.fill")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(Color.accentColor)
+                }
+                .buttonStyle(.hapticPlain)
+            }
+        } else {
+            Text(Strings.Insights.commonTriggerNotEnough)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
     }
 
@@ -253,7 +326,7 @@ struct WeeklyReportView: View {
         VStack(alignment: .leading, spacing: 8) {
             MoneyTrajectoryChart(points: trajectoryPoints)
             if let lastPoint = trajectoryPoints.last {
-                Text(Strings.Report.moneyTrajectoryCaption(InsightsEngine.formattedMoney(lastPoint.cumulativeSaved)))
+                Text(Strings.Report.moneyTrajectoryCaption(InsightsEngine.formattedMoney(lastPoint.cumulativeSaved, currencyCode: priceCurrencyCode)))
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -263,7 +336,8 @@ struct WeeklyReportView: View {
 
     private func radarText(for window: InsightsEngine.PredictedWindow) -> String {
         if let trigger = window.trigger {
-            return Strings.Home.triggerRadarPreview(weekday: window.weekdayName, hour: window.formattedHour, trigger: trigger.label.lowercased())
+            let label = AppLanguage.current.effective == .german ? trigger.label : trigger.label.lowercased()
+            return Strings.Home.triggerRadarPreview(weekday: window.weekdayName, hour: window.formattedHour, trigger: label)
         }
         return Strings.Home.triggerRadarPreview(weekday: window.weekdayName, hour: window.formattedHour)
     }

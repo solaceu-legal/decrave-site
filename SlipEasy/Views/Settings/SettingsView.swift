@@ -8,6 +8,7 @@ import SwiftData
 
 struct SettingsView: View {
     @Binding var path: [AppRoute]
+    @Environment(\.dismiss) private var dismiss
 
     @Query(filter: #Predicate<CravingLog> { $0.outcomeRaw == "beaten" })
     private var beatenLogs: [CravingLog]
@@ -16,12 +17,15 @@ struct SettingsView: View {
     private var smokedLogs: [CravingLog]
 
     @AppStorage("pricePerPack") private var pricePerPack: Double = 8.5
+    @AppStorage(MoneySettings.currencyStorageKey) private var priceCurrencyCode = MoneySettings.deviceCurrencyCode
     @AppStorage("notificationsEnabled") private var notificationsEnabled = false
     @AppStorage(Analytics.consentKey) private var analyticsEnabled = false
+    @AppStorage(AppLanguage.storageKey) private var appLanguageCode = AppLanguage.english.rawValue
 
     @State private var restoreResult: RestoreResult?
     @State private var showPaywall = false
     @State private var showPromise = false
+    @State private var showPackPriceEditor = false
 
     private enum RestoreResult: Identifiable, Hashable {
         case success, empty, failure
@@ -49,68 +53,106 @@ struct SettingsView: View {
 
     private var momentum: Int {
         let logs = (beatenLogs + smokedLogs).map {
-            LogSummary(timestamp: $0.timestamp, outcome: $0.outcome, trigger: $0.trigger, usedIntervention: $0.interventionTool != nil)
+            LogSummary(timestamp: $0.timestamp, outcome: $0.outcome, trigger: $0.trigger, usedIntervention: $0.interventionTool != nil, interventionTool: $0.interventionTool)
         }
         return InsightsEngine.momentumScore(logs: logs)
     }
 
     private var formattedMoneySaved: String {
-        InsightsEngine.formattedMoney(InsightsEngine.moneySaved(beatenCount: beatenCount, pricePerPack: pricePerPack))
+        InsightsEngine.formattedMoney(InsightsEngine.moneySaved(beatenCount: beatenCount, pricePerPack: pricePerPack), currencyCode: priceCurrencyCode)
+    }
+
+    private var allLogSummaries: [LogSummary] {
+        (beatenLogs + smokedLogs).map {
+            LogSummary(timestamp: $0.timestamp, outcome: $0.outcome, trigger: $0.trigger, usedIntervention: $0.interventionTool != nil, interventionTool: $0.interventionTool)
+        }
+    }
+
+    private var predictedWindow: InsightsEngine.PredictedWindow? {
+        InsightsEngine.predictedCravingWindow(logs: allLogSummaries)
     }
 
     var body: some View {
-        // ScrollView + VStack instead of List — matches WeeklyReportView's
-        // structure exactly (same title styling, same freeSectionCard-style
-        // eyebrow-in-card grouping) so card widths and the spacing between
-        // them line up between the You and Insights tabs instead of
-        // following List's own row-inset rules.
-        ScrollView {
-            VStack(alignment: .leading, spacing: 24) {
-                Text(Strings.Tab.you)
+        VStack(spacing: 0) {
+            HStack(alignment: .center) {
+                Text(Strings.Settings.pageTitle)
                     .font(.title2)
                     .fontWeight(.bold)
-
-                membershipCard
-
-                sectionCard(eyebrow: Strings.Settings.yourNumbersHeader) {
-                    statsGrid
+                Spacer(minLength: 16)
+                Button {
+                    dismiss()
+                } label: {
+                    Image(systemName: "xmark")
+                        .font(.body.weight(.semibold))
+                        .frame(width: 44, height: 44)
+                        .background(Color.cardFill, in: Circle())
+                        .overlay(Circle().strokeBorder(Color.cardStroke, lineWidth: 1))
+                        .contentShape(Circle())
                 }
-
-                promiseRow
-
-                notificationCard
-
-                analyticsCard
-
-                sectionCard(eyebrow: Strings.Settings.proSectionHeader) {
-                    proActions
-                }
-
-                sectionCard(eyebrow: Strings.Settings.legalSectionHeader) {
-                    legalLinks
-                }
-
-                logSlipButton
+                .buttonStyle(.plain)
+                .foregroundStyle(.primary)
+                .accessibilityLabel(Strings.Settings.close)
             }
             .padding(.horizontal, 24)
-            .padding(.top, 24)
-            .padding(.bottom, Layout.tabBarClearance)
+            .padding(.top, 12)
+
+            // The settings screen is pushed inside the Progress tab, so the
+            // main tab bar remains visible. Extra scroll room keeps the final
+            // action clear of that bar after the scroll settles.
+            ScrollView {
+                VStack(alignment: .leading, spacing: 24) {
+                    languageCard
+
+                    packPriceCard
+
+                    membershipCard
+
+                    sectionCard(eyebrow: Strings.Settings.yourNumbersHeader) {
+                        statsGrid
+                    }
+
+                    promiseRow
+
+                    notificationCard
+
+                    analyticsCard
+
+                    sectionCard(eyebrow: Strings.Settings.proSectionHeader) {
+                        proActions
+                    }
+
+                    sectionCard(eyebrow: Strings.Settings.legalSectionHeader) {
+                        legalLinks
+                    }
+
+                    logSlipButton
+                }
+                .padding(.horizontal, 24)
+                .padding(.top, 16)
+                .padding(.bottom, 120)
+            }
         }
         .background(Color.appBackground.ignoresSafeArea())
+        .toolbar(.hidden, for: .navigationBar)
         .task {
             let isAuthorized = await NotificationManager.isAuthorized()
             if !isAuthorized && notificationsEnabled {
                 notificationsEnabled = false
+            } else if isAuthorized && notificationsEnabled {
+                NotificationManager.refreshSchedule(predictedWindow: predictedWindow)
             }
         }
         .alert(item: $restoreResult) { result in
-            Alert(title: Text(result.title), message: Text(result.message), dismissButton: .default(Text("OK")))
+            Alert(title: Text(result.title), message: Text(result.message), dismissButton: .default(Text(Strings.Settings.ok)))
         }
         .sheet(isPresented: $showPaywall) {
             PaywallView()
         }
         .sheet(isPresented: $showPromise) {
             NeverResetPromiseView()
+        }
+        .sheet(isPresented: $showPackPriceEditor) {
+            PackPriceEditorView(pricePerPack: $pricePerPack, currencyCode: $priceCurrencyCode)
         }
     }
 
@@ -129,6 +171,84 @@ struct SettingsView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
         .cardStyle()
+    }
+
+    private var languageCard: some View {
+        HStack(spacing: 12) {
+            Image(systemName: "globe")
+                .font(.title3)
+                .foregroundStyle(Color.accentColor)
+                .frame(width: 28)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(Strings.Settings.languageTitle)
+                    .font(.headline)
+                Text(Strings.Settings.languageSubtitle)
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+
+            Spacer(minLength: 8)
+
+            Menu {
+                ForEach(AppLanguage.allCases) { language in
+                    Button {
+                        appLanguageCode = language.rawValue
+                        WidgetSharedStore.saveLanguage(language.rawValue)
+                    } label: {
+                        HStack {
+                            Text(language.displayName)
+                            if language.rawValue == appLanguageCode {
+                                Spacer()
+                                Image(systemName: "checkmark")
+                            }
+                        }
+                    }
+                }
+            } label: {
+                HStack(spacing: 5) {
+                    Text(selectedLanguage.displayName)
+                        .font(.subheadline.weight(.semibold))
+                    Image(systemName: "chevron.up.chevron.down")
+                        .font(.caption2.weight(.bold))
+                }
+            }
+            .tint(Color.accentColor)
+            .accessibilityLabel(Strings.Settings.languageTitle)
+        }
+        .padding(16)
+        .cardStyle()
+    }
+
+    private var selectedLanguage: AppLanguage {
+        AppLanguage(rawValue: appLanguageCode) ?? .english
+    }
+
+    private var packPriceCard: some View {
+        Button {
+            showPackPriceEditor = true
+        } label: {
+            HStack(spacing: 12) {
+                Image(systemName: "banknote")
+                    .font(.title3)
+                    .foregroundStyle(Color.accentColor)
+                    .frame(width: 28)
+                Text(Strings.Money.packPrice)
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+                Spacer(minLength: 8)
+                Text(InsightsEngine.formattedMoney(pricePerPack, currencyCode: priceCurrencyCode))
+                    .font(.subheadline.weight(.semibold))
+                    .foregroundStyle(Color.accentColor)
+                Image(systemName: "chevron.right")
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+            }
+            .contentShape(Rectangle())
+            .padding(16)
+            .cardStyle()
+        }
+        .buttonStyle(.plain)
     }
 
     private var membershipCard: some View {
@@ -212,7 +332,7 @@ struct SettingsView: View {
                 .onChange(of: notificationsEnabled) { _, newValue in
                     if newValue {
                         Task {
-                            let granted = await NotificationManager.requestAuthorizationAndSchedule()
+                            let granted = await NotificationManager.requestAuthorizationAndSchedule(predictedWindow: predictedWindow)
                             if !granted {
                                 notificationsEnabled = false
                             }
@@ -221,12 +341,21 @@ struct SettingsView: View {
                         NotificationManager.cancel()
                     }
                 }
-            Text(Strings.Settings.notificationsFooter)
+            Text(notificationFooter)
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
         .padding(20)
         .cardStyle()
+    }
+
+    private var notificationFooter: String {
+        guard let predictedWindow else { return Strings.Settings.notificationsDefaultFooter }
+        return Strings.Settings.notificationsPatternFooter(
+            weekday: predictedWindow.weekdayName,
+            hour: predictedWindow.formattedHour,
+            occurrences: predictedWindow.occurrences
+        )
     }
 
     private var analyticsCard: some View {
@@ -284,11 +413,12 @@ struct SettingsView: View {
         } label: {
             Text(Strings.Settings.logSlipRow)
                 .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(20)
+                .cardStyle()
+                .contentShape(RoundedRectangle(cornerRadius: 24, style: .continuous))
         }
         .buttonStyle(.hapticPlain)
-        .padding(20)
-        .cardStyle()
     }
 
     private var statsGrid: some View {

@@ -38,7 +38,8 @@ struct TopTriggersRows: View {
                     .frame(width: 20)
                 Text(item.trigger.label)
                     .font(.subheadline.weight(.semibold))
-                    .lineLimit(1)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
             }
             .frame(width: 110, alignment: .leading)
 

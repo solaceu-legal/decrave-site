@@ -26,6 +26,7 @@ struct ProLockedSection<Content: View>: View {
                 lockedBody
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(20)
         .cardStyle()
         .sheet(isPresented: $showPaywall) {

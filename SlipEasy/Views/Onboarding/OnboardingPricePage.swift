@@ -7,13 +7,8 @@ import SwiftUI
 
 struct OnboardingPricePage: View {
     @Binding var pricePerPack: Double
+    @Binding var currencyCode: String
     let onDone: () -> Void
-
-    @ScaledMetric(relativeTo: .largeTitle) private var numberSize: CGFloat = 48
-
-    private var formattedPrice: String {
-        InsightsEngine.formattedMoney(pricePerPack)
-    }
 
     var body: some View {
         // Same centered ScrollView/GeometryReader pattern as
@@ -30,12 +25,7 @@ struct OnboardingPricePage: View {
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 32)
 
-                    Text(formattedPrice)
-                        .font(.system(size: numberSize, weight: .bold, design: .rounded))
-                        .minimumScaleFactor(0.5)
-                        .lineLimit(1)
-
-                    Slider(value: $pricePerPack, in: 3...20, step: 0.5)
+                    PackPriceFields(pricePerPack: $pricePerPack, currencyCode: $currencyCode)
                         .padding(.horizontal, 32)
 
                     Text(Strings.Onboarding.priceCaption)
@@ -52,6 +42,7 @@ struct OnboardingPricePage: View {
                     }
                     .buttonStyle(.hapticProminent)
                     .controlSize(.large)
+                    .disabled(!pricePerPack.isFinite || pricePerPack <= 0)
                     .padding(.horizontal, 32)
                     .padding(.bottom, 24)
                 }
@@ -62,5 +53,5 @@ struct OnboardingPricePage: View {
 }
 
 #Preview {
-    OnboardingPricePage(pricePerPack: .constant(8.5), onDone: {})
+    OnboardingPricePage(pricePerPack: .constant(8.5), currencyCode: .constant("USD"), onDone: {})
 }

@@ -15,9 +15,21 @@ struct LogSummary {
     let outcome: CravingOutcome
     let trigger: CravingTrigger?
     let usedIntervention: Bool
+    let interventionTool: InterventionTool?
 }
 
 enum InsightsEngine {
+    struct InterventionRecommendation {
+        let tool: InterventionTool
+        let attemptCount: Int
+        let beatenCount: Int
+
+        var successRate: Double {
+            guard attemptCount > 0 else { return 0 }
+            return Double(beatenCount) / Double(attemptCount)
+        }
+    }
+
     struct TriggerPatternInsight {
         let trigger: CravingTrigger
         let count: Int
@@ -57,6 +69,24 @@ enum InsightsEngine {
         return TriggerPatternInsight(trigger: top.key, count: top.value)
     }
 
+    // A free, descriptive pattern that counts every logged craving. It gives
+    // the user a useful starting point before there is enough data to compare
+    // tools or predict a future window.
+    static func mostCommonTrigger(in logs: [LogSummary]) -> TriggerPatternInsight? {
+        var counts: [CravingTrigger: Int] = [:]
+        for log in logs {
+            guard let trigger = log.trigger else { continue }
+            counts[trigger, default: 0] += 1
+        }
+        guard let top = counts.max(by: { left, right in
+            if left.value != right.value { return left.value < right.value }
+            return left.key.rawValue > right.key.rawValue
+        }), top.value >= minimumOccurrences else {
+            return nil
+        }
+        return TriggerPatternInsight(trigger: top.key, count: top.value)
+    }
+
     // Counts both outcomes — a trigger applies to the craving whether or
     // not it was beaten. Returns every trigger that showed up at least
     // once, ranked by count, rather than truncating to a fixed top-N.
@@ -89,6 +119,34 @@ enum InsightsEngine {
         guard matching.count >= minimumOccurrences else { return nil }
         let beaten = matching.filter { $0.outcome == .beaten }.count
         return TriggerToolInsight(trigger: topTrigger, attemptCount: matching.count, beatenCount: beaten)
+    }
+
+    /// Recommends the tool with the strongest observed result for this
+    /// trigger. This is a descriptive nudge, not a promise that a tool will
+    /// work next time. Two matching attempts are required before we call it
+    /// a pattern; ties keep breathing as the calmer default.
+    static func recommendedIntervention(for trigger: CravingTrigger?, in logs: [LogSummary]) -> InterventionRecommendation? {
+        let matching = logs.filter { log in
+            guard log.usedIntervention else { return false }
+            return trigger == nil || log.trigger == trigger
+        }
+        guard matching.count >= minimumOccurrences else { return nil }
+
+        let grouped = Dictionary(grouping: matching) { log in
+            log.interventionTool ?? .breathing
+        }
+        let recommendations = grouped.map { tool, entries in
+            InterventionRecommendation(
+                tool: tool,
+                attemptCount: entries.count,
+                beatenCount: entries.filter { $0.outcome == .beaten }.count
+            )
+        }
+        return recommendations.sorted {
+            if $0.successRate != $1.successRate { return $0.successRate > $1.successRate }
+            if $0.attemptCount != $1.attemptCount { return $0.attemptCount > $1.attemptCount }
+            return $0.tool == .breathing
+        }.first
     }
 
     // A simplified heuristic, not a validated psychological score. Starts
@@ -128,48 +186,23 @@ enum InsightsEngine {
     /// in sync with the per-beaten gain used above.
     static let momentumGainPerBeaten = 3
 
-    // 20/pack is the US/UK legal minimum — not a precise per-user figure,
-    // but a reasonable approximation for cigarettes-per-pack.
+    // Each logged craving beaten is treated as one cigarette avoided.
+    // This is an estimate based on the user's pack price and 20/pack.
     static func moneySaved(beatenCount: Int, pricePerPack: Double, cigarettesPerPack: Int = 20) -> Double {
         let pricePerCigarette = pricePerPack / Double(cigarettesPerPack)
         return pricePerCigarette * Double(beatenCount)
     }
 
-    // Decrave's target market only: US, UK, Canada, Australia. A price
-    // the user entered assuming one of these four should display in
-    // that same currency, but a device set to some other region
-    // shouldn't suddenly show, say, JPY against a price they meant in
-    // dollars — USD is the safe fallback there.
-    private static let supportedCurrencyCodes: Set<String> = ["USD", "GBP", "CAD", "AUD"]
-
-    static var localizedCurrencyCode: String {
-        guard let code = Locale.current.currency?.identifier, supportedCurrencyCodes.contains(code) else {
-            return "USD"
-        }
-        return code
-    }
-
-    // Centralizes currency formatting so every money display follows the
-    // device's own region — and, since the currency code now always
-    // matches the locale, Foundation never needs to prefix it with a
-    // disambiguator like "US$" or "CA$" the way it would showing USD
-    // explicitly on a non-US device.
-    static func formattedMoney(_ amount: Double) -> String {
-        amount.formatted(.currency(code: localizedCurrencyCode))
-    }
-
-    private static let currencySymbols: [String: String] = ["USD": "$", "GBP": "£", "CAD": "$", "AUD": "$"]
-
-    // Bare symbol, never a "US$"/"CA$"-style disambiguation prefix —
-    // for the Home hero number specifically, which sits beside cravings
-    // beaten in a fixed-width column (see HomeView.heroStat). A never-
-    // resets total will keep growing digits over months of use, and the
-    // prefix is exactly the few extra characters that would eventually
-    // force a wrap there. formattedMoney(_:) above (with its fuller,
-    // occasionally-disambiguated form) is still correct everywhere else.
-    static func formattedMoneyCompact(_ amount: Double) -> String {
-        let symbol = currencySymbols[localizedCurrencyCode] ?? "$"
-        return symbol + amount.formatted(.number.precision(.fractionLength(2)))
+    // Currency belongs to the saved pack price, independent of the app's
+    // display language and later device-region changes. No FX conversion.
+    static func formattedMoney(_ amount: Double, currencyCode: String = MoneySettings.currencyCode) -> String {
+        let formatter = NumberFormatter()
+        formatter.locale = AppLanguage.current.locale
+        formatter.numberStyle = .currency
+        formatter.currencyCode = currencyCode
+        formatter.roundingMode = .halfUp
+        return formatter.string(from: NSNumber(value: amount))
+            ?? amount.formatted(.currency(code: currencyCode).locale(AppLanguage.current.locale))
     }
 
     struct PredictedWindow {
@@ -181,9 +214,16 @@ enum InsightsEngine {
         // Shared by the Home preview card and the Insights detail card so
         // the two never drift into slightly different phrasing.
         var weekdayName: String {
-            let symbols = Calendar.current.weekdaySymbols
-            guard weekday >= 1, weekday <= symbols.count else { return "" }
-            return symbols[weekday - 1] + "s"
+            guard (1...7).contains(weekday) else { return "" }
+            var components = DateComponents()
+            // Calendar weekday: 1 = Sunday ... 7 = Saturday.
+            components.weekday = weekday
+            let calendar = Calendar(identifier: .gregorian)
+            guard let date = calendar.date(from: components) else { return "" }
+            let formatter = DateFormatter()
+            formatter.locale = AppLanguage.current.locale
+            formatter.setLocalizedDateFormatFromTemplate("EEEE")
+            return formatter.string(from: date)
         }
 
         var formattedHour: String {
@@ -191,7 +231,8 @@ enum InsightsEngine {
             components.hour = hour
             let date = Calendar.current.date(from: components) ?? Date()
             let formatter = DateFormatter()
-            formatter.dateFormat = "h a"
+            formatter.locale = AppLanguage.current.locale
+            formatter.setLocalizedDateFormatFromTemplate("jm")
             return formatter.string(from: date)
         }
     }

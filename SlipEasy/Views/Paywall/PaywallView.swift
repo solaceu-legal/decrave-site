@@ -70,7 +70,7 @@ struct PaywallView: View {
             selectDefaultProductIfNeeded()
         }
         .alert(item: $errorAlert) { alert in
-            Alert(title: Text(alert.title), message: Text(alert.message), dismissButton: .default(Text("OK")))
+            Alert(title: Text(alert.title), message: Text(alert.message), dismissButton: .default(Text(Strings.Settings.ok)))
         }
     }
 
@@ -387,7 +387,10 @@ struct PaywallView: View {
     }
 
     private func displayName(for product: Product) -> String {
-        product.displayName.isEmpty ? (ProProduct(rawValue: product.id)?.fallbackLabel ?? product.id) : product.displayName
+        if let knownProduct = ProProduct(rawValue: product.id) {
+            return knownProduct.fallbackLabel
+        }
+        return product.displayName.isEmpty ? product.id : product.displayName
     }
 
     private func periodLabel(for product: Product) -> String {
@@ -395,10 +398,10 @@ struct PaywallView: View {
             return Strings.Paywall.lifetimeLabel
         }
         switch period.unit {
-        case .day: return period.value == 1 ? "/day" : "/\(period.value) days"
-        case .week: return period.value == 1 ? "/week" : "/\(period.value) weeks"
-        case .month: return period.value == 1 ? "/month" : "/\(period.value) months"
-        case .year: return period.value == 1 ? "/year" : "/\(period.value) years"
+        case .day: return Strings.Paywall.billingPeriod(unit: "day", value: period.value)
+        case .week: return Strings.Paywall.billingPeriod(unit: "week", value: period.value)
+        case .month: return Strings.Paywall.billingPeriod(unit: "month", value: period.value)
+        case .year: return Strings.Paywall.billingPeriod(unit: "year", value: period.value)
         @unknown default: return ""
         }
     }

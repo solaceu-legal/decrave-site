@@ -11,6 +11,7 @@ import SwiftData
 /// over" wording here, ever.
 struct RelapseConfirmationView: View {
     @Binding var path: [AppRoute]
+    var onReturn: (() -> Void)? = nil
 
     @Query(filter: #Predicate<CravingLog> { $0.outcomeRaw == "beaten" })
     private var beatenLogs: [CravingLog]
@@ -39,7 +40,11 @@ struct RelapseConfirmationView: View {
                     Spacer(minLength: 0)
 
                     Button {
-                        path.removeAll()
+                        if let onReturn {
+                            onReturn()
+                        } else {
+                            path.removeAll()
+                        }
                     } label: {
                         Text(Strings.Relapse.back)
                             .frame(maxWidth: .infinity)

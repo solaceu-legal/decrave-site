@@ -6,63 +6,84 @@
 import SwiftUI
 import SwiftData
 
-private enum MainTab {
-    case home, insights, you
+private enum MainTab: String {
+    case home, progress
+}
+
+private enum MainPresentation: String, Identifiable {
+    case sos, logConfirmation
+    var id: String { rawValue }
 }
 
 struct MainFlowView: View {
-    @State private var selectedTab: MainTab = .home
+    @Binding var requestedSOSSource: SOSLaunchSource?
+    @SceneStorage("mainTab") private var selectedTabRaw = MainTab.home.rawValue
+    @AppStorage(AppLanguage.storageKey) private var appLanguageCode = AppLanguage.english.rawValue
     @State private var homePath: [AppRoute] = []
-    @State private var youPath: [AppRoute] = []
-    @State private var isSOSPresented = false
+    @State private var presentation: MainPresentation?
+    @State private var returnAfterConfirmation: (() -> Void)?
+    @State private var sosInitialTrigger: CravingTrigger?
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private let fabSize = CGSize(width: 128, height: 52)
-    // Taller than fabSize.height on purpose — the SOS button is centered
-    // inside this band as a plain SwiftUI .overlay (see tabBar), so it's
-    // guaranteed to sit fully within whatever height safeAreaInset ends
-    // up reserving, with no offset math against the home indicator's
-    // height (which differs between the simulator and real devices and
-    // was the actual cause of the clipping this replaces).
-    private let fabBandHeight: CGFloat = 60
+
+    private var selectedTab: MainTab {
+        MainTab(rawValue: selectedTabRaw) ?? .home
+    }
+
+    init(requestedSOSSource: Binding<SOSLaunchSource?> = .constant(nil)) {
+        _requestedSOSSource = requestedSOSSource
+    }
 
     var body: some View {
-        // Column order in the flat row (Home, Insights, You) mirrors
-        // Decrave's own tab bar with Pod (social, out of scope) dropped;
-        // the SOS button floats above that row as its own band rather
-        // than a 4th column, so it can sit at the true horizontal center.
+        // Keep SOS in the center slot as the primary action. Progress is
+        // the single place for Insights and account/settings content.
         Group {
             switch selectedTab {
             case .home:
                 NavigationStack(path: $homePath) {
                     HomeView(
                         path: $homePath,
-                        onOpenInsights: { selectedTab = .insights },
-                        onStartQuest: { isSOSPresented = true }
+                        onOpenInsights: { selectedTabRaw = MainTab.progress.rawValue },
+                        onStartQuest: { trigger in
+                            presentSOS(source: .dailyQuest, trigger: trigger)
+                        }
                     )
+                    .id(appLanguageCode)
                     .navigationDestination(for: AppRoute.self) { route in
                         destination(for: route, path: $homePath)
                     }
                 }
-            case .insights:
-                NavigationStack {
-                    WeeklyReportView()
-                }
-            case .you:
-                NavigationStack(path: $youPath) {
-                    SettingsView(path: $youPath)
-                        .navigationDestination(for: AppRoute.self) { route in
-                            destination(for: route, path: $youPath)
-                        }
-                }
+            case .progress:
+                ProgressHubView(onStartSOS: { trigger in
+                    presentSOS(source: .button, trigger: trigger)
+                }, onLogSaved: { onReturn in
+                    returnAfterConfirmation = onReturn
+                    presentation = .logConfirmation
+                })
             }
         }
         .safeAreaInset(edge: .bottom) {
             tabBar
         }
         .background(Color.appBackground)
-        .fullScreenCover(isPresented: $isSOSPresented) {
-            SOSFlowView()
+        .fullScreenCover(item: $presentation) { presented in
+            switch presented {
+            case .sos:
+                SOSFlowView(initialTrigger: sosInitialTrigger)
+            case .logConfirmation:
+                RelapseConfirmationView(path: .constant([]), onReturn: {
+                    returnAfterConfirmation?()
+                    returnAfterConfirmation = nil
+                    presentation = nil
+                })
+            }
+        }
+        .onAppear {
+            presentRequestedSOSIfNeeded()
+        }
+        .onChange(of: requestedSOSSource) { _, _ in
+            presentRequestedSOSIfNeeded()
         }
     }
 
@@ -70,11 +91,13 @@ struct MainFlowView: View {
     private func destination(for route: AppRoute, path: Binding<[AppRoute]>) -> some View {
         switch route {
         case .log(let outcome, let tool):
-            LogView(outcome: outcome, tool: tool, path: path)
+            LogView(outcome: outcome, tool: tool, path: path, contextTrigger: .constant(nil))
         case .relapseConfirmation:
             RelapseConfirmationView(path: path)
         case .dataExport:
             DataExportView()
+        case .settings:
+            EmptyView() // settings belongs to the Progress navigation stack
         case .intervention, .toolbox:
             EmptyView() // unreachable here — those routes belong to SOSFlowView's own stack
         }
@@ -83,28 +106,18 @@ struct MainFlowView: View {
     // MARK: - Tab bar
 
     private var tabBar: some View {
-        VStack(spacing: 0) {
-            // sosButton is a direct VStack child (not an .overlay on a
-            // Color.clear spacer) on purpose — an overlay's size doesn't
-            // reliably count toward what .safeAreaInset measures and
-            // reserves for the whole bar, which is what let this button
-            // clip the bottom of scrollable content before. As a real
-            // child with explicit padding, its height is unambiguous.
-            sosButton
-                .padding(.vertical, (fabBandHeight - fabSize.height) / 2)
+        HStack(spacing: 0) {
+            tabButton(.home, icon: "house.fill", label: Strings.Tab.home)
+                .frame(maxWidth: .infinity)
 
-            HStack(spacing: 0) {
-                tabButton(.home, icon: "house.fill", label: Strings.Tab.home)
-                    .frame(maxWidth: .infinity)
-                tabButton(.insights, icon: "chart.bar.fill", label: Strings.Tab.insights)
-                    .frame(maxWidth: .infinity)
-                tabButton(.you, icon: "person.crop.circle.fill", label: Strings.Tab.you)
-                    .frame(maxWidth: .infinity)
-            }
-            .padding(.horizontal, 16)
-            .padding(.top, 12)
-            .padding(.bottom, 8)
+            sosButton
+                .frame(maxWidth: .infinity)
+
+            tabButton(.progress, icon: "chart.bar.xaxis", label: Strings.Tab.progress)
+                .frame(maxWidth: .infinity)
         }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
         .background(
             LinearGradient(
                 colors: [Color.black.opacity(0.78), Color.black.opacity(0.94)],
@@ -121,7 +134,7 @@ struct MainFlowView: View {
 
     private func tabButton(_ tab: MainTab, icon: String, label: String) -> some View {
         Button {
-            selectedTab = tab
+            selectedTabRaw = tab.rawValue
         } label: {
             VStack(spacing: 4) {
                 Image(systemName: icon)
@@ -137,7 +150,7 @@ struct MainFlowView: View {
 
     private var sosButton: some View {
         Button {
-            isSOSPresented = true
+            presentSOS(source: .button)
         } label: {
             ZStack {
                 pulseRing
@@ -145,7 +158,7 @@ struct MainFlowView: View {
                     .fill(LinearGradient.warm)
                     .shadow(color: .orange.opacity(0.45), radius: 10, y: 4)
                 Text(Strings.Tab.sosButtonShortLabel)
-                    .font(.system(size: 14, weight: .heavy))
+                    .font(.system(size: 20, weight: .heavy))
                     .foregroundStyle(Color.black.opacity(0.75))
                     .minimumScaleFactor(0.8)
                     .lineLimit(1)
@@ -155,6 +168,18 @@ struct MainFlowView: View {
         }
         .buttonStyle(.hapticPlain)
         .accessibilityLabel(Strings.Tab.sosButtonLabel)
+    }
+
+    private func presentRequestedSOSIfNeeded() {
+        guard let source = requestedSOSSource else { return }
+        requestedSOSSource = nil
+        presentSOS(source: source)
+    }
+
+    private func presentSOS(source: SOSLaunchSource, trigger: CravingTrigger? = nil) {
+        sosInitialTrigger = trigger
+        presentation = .sos
+        Analytics.trackSOSOpened(source: source.rawValue)
     }
 
     private var pulseRing: some View {

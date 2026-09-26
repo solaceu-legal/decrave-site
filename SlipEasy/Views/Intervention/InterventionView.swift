@@ -15,8 +15,6 @@ struct InterventionView: View {
     let tool: InterventionTool
     @Binding var path: [AppRoute]
 
-    // Only actually used when this view is the *root* of SOSFlowView's
-    // NavigationStack (the default breathing screen) — see exitEarly().
     @Environment(\.dismiss) private var dismiss
 
     // Ever-increasing session counter, persisted. Read once per appearance
@@ -54,7 +52,7 @@ struct InterventionView: View {
     }
 
     private var content: some View {
-        ZStack {
+        ZStack(alignment: .topTrailing) {
             Color.appBackground.ignoresSafeArea()
 
             // Ambient only — never tied to phase timing or framed as
@@ -66,13 +64,10 @@ struct InterventionView: View {
             }
 
             VStack {
-                HStack {
-                    Spacer()
-                    Button(Strings.Intervention.exit, action: exitEarly)
-                        .buttonStyle(.hapticPlain)
-                        .foregroundStyle(.white.opacity(0.7))
-                        .padding()
-                }
+                // Reserve the same top space the former inline Exit control
+                // occupied, while anchoring the control independently to
+                // the screen edge below.
+                Color.clear.frame(height: 52)
 
                 Spacer()
 
@@ -118,6 +113,13 @@ struct InterventionView: View {
                     .padding(.horizontal, 32)
                     .padding(.bottom, 48)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+
+            Button(Strings.Intervention.exit, action: exitEarly)
+                .buttonStyle(.hapticPlain)
+                .foregroundStyle(.white.opacity(0.7))
+                .padding(.top, 16)
+                .padding(.trailing, 40)
         }
     }
 
@@ -205,17 +207,12 @@ struct InterventionView: View {
     private func exitEarly() {
         let duration = Int(Date().timeIntervalSince(sessionStart))
         Analytics.trackInterventionCompleted(durationSec: duration, exitedEarly: true, toolType: tool.rawValue)
-        // path.removeAll() only produces an observable change (which is
-        // what SOSFlowView's onChange(of: path) watches for to dismiss
-        // the cover) when path was non-empty — true for every *pushed*
-        // screen in this flow. This view is also used as the flow's
-        // NavigationStack root (the default breathing screen), where path
-        // is already [] before this runs, so removeAll() is a no-op and
-        // nothing dismisses. Guard that case with dismiss() directly.
+        // Pop only this exercise. In the SOS flow that returns to the SOS
+        // choice screen; when presented directly, dismiss the presentation.
         if path.isEmpty {
             dismiss()
         } else {
-            path.removeAll()
+            path.removeLast()
         }
     }
 }
