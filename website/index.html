@@ -306,25 +306,25 @@
           <div class="billing" role="tablist" aria-label="Billing period">
             <button type="button" class="billing-item" data-period="monthly" role="tab">
               <span class="bp-label">Monthly</span>
-              <span class="bp-price">$9.99</span>
+              <span class="bp-price">$5.99</span>
             </button>
             <button type="button" class="billing-item active" data-period="yearly" role="tab" aria-selected="true">
-              <span class="bp-badge">Save 50%</span>
+              <span class="bp-badge">Save 58%</span>
               <span class="bp-label">Yearly</span>
-              <span class="bp-price">$59.99</span>
+              <span class="bp-price">$29.99</span>
             </button>
             <button type="button" class="billing-item" data-period="lifetime" role="tab">
               <span class="bp-label">Lifetime</span>
-              <span class="bp-price">$99.99</span>
+              <span class="bp-price">$59.99</span>
             </button>
           </div>
 
           <div class="pro-summary">
             <div class="pro-price">
-              <span class="amount" id="pro-amount">$59.99</span>
+              <span class="amount" id="pro-amount">$29.99</span>
               <span class="per" id="pro-per">/ year</span>
             </div>
-            <p class="pro-note" id="pro-note">7-day free trial · then $59.99/year</p>
+            <p class="pro-note" id="pro-note">7-day free trial · then $29.99/year</p>
           </div>
 
           <ul class="plan-list">
@@ -451,9 +451,9 @@
     var wrap = document.querySelector('.billing');
     if (!wrap) return;
     var data = {
-      monthly:  { amount: '$9.99',  per: '/ month', note: 'Billed monthly · cancel anytime', cta: 'Choose Monthly' },
-      yearly:   { amount: '$59.99', per: '/ year',  note: '7-day free trial · then $59.99/year', cta: 'Start 7-day free trial' },
-      lifetime: { amount: '$99.99', per: 'one-time', note: 'Pay once · Pro forever', cta: 'Get Lifetime' }
+      monthly:  { amount: '$5.99',  per: '/ month', note: 'Billed monthly · cancel anytime', cta: 'Choose Monthly' },
+      yearly:   { amount: '$29.99', per: '/ year',  note: '7-day free trial · then $29.99/year', cta: 'Start 7-day free trial' },
+      lifetime: { amount: '$59.99', per: 'one-time', note: 'Pay once · Pro forever', cta: 'Get Lifetime' }
     };
     wrap.addEventListener('click', function (e) {
       var btn = e.target.closest('.billing-item');

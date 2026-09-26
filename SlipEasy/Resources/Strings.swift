@@ -1371,7 +1371,7 @@ enum Strings {
         static var monthlyPlan: String { t("Monthly", [.simplifiedChinese: "月度", .traditionalChinese: "月費", .german: "Monatlich", .french: "Mensuel", .italian: "Mensile", .spanish: "Mensual", .portuguese: "Mensal", .japanese: "月額", .korean: "월간"]) }
         static var yearlyPlan: String { t("Yearly", [.simplifiedChinese: "年度", .traditionalChinese: "年費", .german: "Jährlich", .french: "Annuel", .italian: "Annuale", .spanish: "Anual", .portuguese: "Anual", .japanese: "年額", .korean: "연간"]) }
         static var lifetimePlan: String { t("Lifetime", [.simplifiedChinese: "终身", .traditionalChinese: "永久", .german: "Dauerhaft", .french: "À vie", .italian: "A vita", .spanish: "De por vida", .portuguese: "Vitalício", .japanese: "買い切り", .korean: "평생"]) }
-        static var bestValueBadge: String { t("Best value", [.simplifiedChinese: "更划算", .traditionalChinese: "更划算", .german: "Bester Preis", .french: "Meilleur tarif", .italian: "Più conveniente", .spanish: "Mejor precio", .portuguese: "Melhor custo-benefício", .japanese: "お得", .korean: "가장 경제적"]) }
+        static var bestValueBadge: String { t("Most popular", [.simplifiedChinese: "最受欢迎", .traditionalChinese: "最受歡迎", .german: "Am beliebtesten", .french: "Le plus populaire", .italian: "Più scelto", .spanish: "Más popular", .portuguese: "Mais popular", .japanese: "人気", .korean: "인기 요금제"]) }
         static func freeTrialLabel(days: Int) -> String {
             switch AppLanguage.current.effective {
             case .simplifiedChinese: "免费试用 \(days) 天"

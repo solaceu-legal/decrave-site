@@ -98,9 +98,9 @@ Thanks for trying it early — we'd love to hear what you think.
 
 | Product ID | 类型 | 建议价格（来自 `docs/SlipEasy-v1.0-开发任务书.md`） | ASC 里必须填的"显示名称" |
 |---|---|---|---|
-| `com.slipeasy.pro.monthly` | 自动续费订阅 | $9.99 / 月 | **Decrave Pro Monthly** |
-| `com.slipeasy.pro.yearly` | 自动续费订阅（主推，含 7 天试用） | $59.99 / 年 | **Decrave Pro Yearly** |
-| `com.slipeasy.pro.lifetime` | 非消耗型内购（买断） | $99.99 一次性 | **Decrave Pro Lifetime** |
+| `com.slipeasy.pro.monthly` | 自动续费订阅 | $5.99 / 月 | **Decrave Pro Monthly** |
+| `com.slipeasy.pro.yearly` | 自动续费订阅（主推，含 7 天试用） | $29.99 / 年 | **Decrave Pro Yearly** |
+| `com.slipeasy.pro.lifetime` | 非消耗型内购（买断） | $59.99 一次性 | **Decrave Pro Lifetime** |
 
 ⚠️ **这一步是 `CLAUDE.md` §4.1 那次 Guideline 5.6 拒审事故的直接教训**——显示名称必须写 **Decrave**，绝对不能出现 SlipEasy 或 CraveCrush 这两个旧名字的任何残留。三个商品、每种语言（这里只做英文）都要单独检查一遍。
 
