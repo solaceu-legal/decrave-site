@@ -27,9 +27,31 @@
 - 可以设置每包价格和币种，让节省金额的估算更贴近实际。
 - 优化练习、记录和设置页面的使用体验。
 
+## App Store 更新说明（英语，美国）
+
+Decrave 1.1 makes support easier to reach when a craving hits.
+
+- Open SOS from the Home Screen, Lock Screen, Control Center, or Shortcuts.
+- Save favorite tools and get suggestions based on your own patterns.
+- Explore a redesigned Progress tab for trends, triggers, and personal data.
+- Set your pack price and currency for more accurate savings.
+- Use Decrave in English, Chinese, German, French, Italian, Spanish, Portuguese, Japanese, or Korean.
+- Enjoy smoother exercises, logging, and settings.
+
+Your cravings beaten still never reset.
+
+## App Store v1.1 元数据
+
+- 推广文案：`Still smoking? Start anyway. Open SOS in one tap, spot your triggers, and keep progress that never resets—even after a slip.`
+- 关键词（100/100 字节）：`nicotine,tobacco,cigarette,cessation,withdrawal,craving,urge,tracker,reduce,stop,breathing,free,help`
+- 名称与副标题保持不变：`Decrave: Quit Smoking Support` / `No quit date required`
+- 完整描述与审核备注以 `docs/app-store-assets/copy.md` 为准。
+- v1.0 截图暂不替换；下一轮复核 v1.1 截图后再上传。
+
 ## 验证与提交状态
 
 - 近期已在 iPhone 17 Pro / iOS 26.5 模拟器验证主要流程，用户也已完成多轮真机验收。
 - 2026-09-26：真机目标的本地 Release 构建通过（未签名）；已核对产物中主 App 和 Widget 均为 1.1 / Build 3。
-- App Store 上传前需使用已配置签名的 Release Archive；本地构建验证不代表已上传或送审。
-- 提交时使用 1.1 / Build 3，并复核 App Groups、CloudKit Production schema、Pro 商品及商店本地化资料。
+- 2026-09-26：正式签名归档通过；首次上传时 Apple 校验发现 Widget 缺少 `CFBundleDisplayName`，已补为 `Decrave`，重新归档并成功上传 1.1 / Build 3；App Store Connect 已处理完成，状态为“准备提交”。
+- 提交前仍需复核 App Groups、CloudKit Production schema、Pro 商品、商店本地化资料与新版截图。
+- v1.1 审核备注中的付费入口已改为：Progress → 右上角设置 → Free Plan → Try Pro；旧版 “You” 标签路径不能继续使用。
