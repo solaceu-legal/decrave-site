@@ -271,6 +271,11 @@ img { max-width: 100%; display: block; }
   padding-top: 0;
 }
 
+.guide-list {
+  display: grid;
+  gap: 18px;
+}
+
 .guide-card {
   display: flex;
   align-items: center;
