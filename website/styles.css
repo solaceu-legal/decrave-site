@@ -271,6 +271,14 @@ img { max-width: 100%; display: block; }
   padding-top: 0;
 }
 
+.guide-hub .guide-category {
+  margin-top: 72px;
+}
+
+.guide-hub-cta {
+  padding-top: 0;
+}
+
 .guide-list {
   display: grid;
   gap: 18px;
@@ -293,7 +301,8 @@ img { max-width: 100%; display: block; }
   margin-bottom: 14px;
 }
 
-.guide-card h2 {
+.guide-card h2,
+.guide-card h3 {
   margin: 0 0 8px;
   font-family: var(--font-display);
   font-size: clamp(25px, 3vw, 34px);
