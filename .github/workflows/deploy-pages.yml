@@ -37,3 +37,78 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+
+  notify-indexnow:
+    needs: deploy
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Notify IndexNow about changed pages
+        env:
+          BEFORE: ${{ github.event.before }}
+          AFTER: ${{ github.sha }}
+        run: |
+          python3 <<'PY'
+          import json
+          import os
+          import subprocess
+          from pathlib import Path
+          from urllib.error import HTTPError
+          from urllib.parse import quote
+          from urllib.request import Request, urlopen
+
+          site = "https://decrave.net"
+          key = Path("website/8e2845b0ef5b4d75a384f74caad762f3.txt").read_text().strip()
+          before = os.environ["BEFORE"]
+          after = os.environ["AFTER"]
+
+          if not before or set(before) == {"0"}:
+              print("No prior revision is available; skipping the initial IndexNow notification.")
+              raise SystemExit(0)
+
+          changed = subprocess.check_output(
+              ["git", "diff", "--name-only", before, after, "--", "website"],
+              text=True,
+          ).splitlines()
+
+          urls = set()
+          for filename in changed:
+              path = Path(filename)
+              if path.suffix.lower() != ".html":
+                  continue
+
+              relative = path.relative_to("website")
+              if relative.name == "index.html":
+                  directory = relative.parent.as_posix()
+                  path_part = "" if directory == "." else quote(directory, safe="/-._~") + "/"
+              else:
+                  path_part = quote(relative.as_posix(), safe="/-._~")
+              urls.add(f"{site}/{path_part}")
+
+          if not urls:
+              print("No HTML pages changed; no IndexNow notification is needed.")
+              raise SystemExit(0)
+
+          payload = {
+              "host": "decrave.net",
+              "key": key,
+              "keyLocation": f"{site}/{key}.txt",
+              "urlList": sorted(urls),
+          }
+          request = Request(
+              "https://api.indexnow.org/indexnow",
+              data=json.dumps(payload).encode("utf-8"),
+              headers={"Content-Type": "application/json; charset=utf-8"},
+              method="POST",
+          )
+          try:
+              with urlopen(request, timeout=30) as response:
+                  print(f"IndexNow accepted {len(urls)} changed page(s): HTTP {response.status}")
+          except HTTPError as error:
+              detail = error.read().decode("utf-8", errors="replace")
+              raise SystemExit(f"IndexNow rejected the notification: HTTP {error.code} {detail}")
+          PY

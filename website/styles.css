@@ -316,6 +316,13 @@ img { max-width: 100%; display: block; }
   color: var(--text-secondary);
 }
 
+.guide-card .guide-inline-link {
+  color: var(--sky);
+  text-decoration: underline;
+  text-decoration-color: rgba(82, 197, 255, 0.42);
+  text-underline-offset: 3px;
+}
+
 .guide-card .btn {
   flex: none;
 }
