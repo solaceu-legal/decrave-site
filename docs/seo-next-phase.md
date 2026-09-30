@@ -2,15 +2,24 @@
 
 更新时间：2026-09-30
 
+## 当前状态
+
+- Google Search Console 的 `decrave.net` 域名资源已验证。
+- `https://decrave.net/sitemap.xml` 读取成功，Google 已发现 10 个页面。
+- 首页已编入 Google 索引。
+- `nicotine-withdrawal-symptoms-timeline.html` 通过实际网址抓取测试，已提交一次编入索引请求。
+- Google 的索引和效果总报表仍在处理；Bing 搜索表现报表也尚未生成。
+- Plausible 中的 `App Store Click` 转化目标已确认存在。
+
 ## 阶段目标
 
 基础技术配置和首批英文指南已完成。接下来先确认页面被抓取、建立可靠的搜索数据，再依据实际查询优化现有页面并争取相关网站的自然提及；暂不按固定数量继续发布文章。
 
-## 现在：完成收录验证
+## 接下来 24–48 小时：复查收录报表
 
-1. 在 Google Search Console 完成 `decrave.net` 域名资源验证，并提交 `https://decrave.net/sitemap.xml`。
-2. 检查首页、指南目录和每篇指南的 URL 检查结果：能否抓取、Google 选择的 canonical、是否已编入索引，以及未收录原因。
-3. 在 Bing Webmaster Tools 等待搜索表现数据生成；对尚未抓取的重要页面先检查 HTTP 状态、canonical 和站内链接，再按需请求索引。
+1. 等 Search Console 报表处理完成后，查看未收录页面原因和 canonical；优先处理抓取错误或错误 canonical。
+2. 等 Bing 搜索表现数据生成后，查看重要页面的抓取状态；有具体问题再修改并重新检查。
+3. 不重复提交刚请求过的 URL；重复提交不会提升它的抓取队列优先级。
 4. 本仓库的 GitHub Pages 部署工作流会在发布 HTML 页面改动后，将对应 canonical URL 通知 IndexNow。它只通知发生变化的 HTML 页面；提交通知不保证页面会被抓取或收录。
 
 ## 接下来 4 周：用数据决定改什么
@@ -41,4 +50,3 @@ Search Console 衡量 Google 搜索展示和点击；Plausible 衡量访客进�
 | 站内行为 | 自然搜索访问、入口页、App Store 点击率及按钮位置 |
 | 下载 | App Store Connect `Website` Campaign 的产品页访问和首次下载 |
 | 站外 | 新增的相关提及、来源访客和后续动作 |
-

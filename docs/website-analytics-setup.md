@@ -1,6 +1,6 @@
 # Decrave 官网统计接入
 
-更新时间：2026-09-27
+更新时间：2026-09-30
 
 ## 目标
 
@@ -23,6 +23,7 @@
 
 - Plausible 站点脚本：已接入首页。
 - 自定义事件：`App Store Click`。
+- Plausible 自定义转化目标：`App Store Click`，已确认出现在 Dashboard。
 - 自定义属性：`button_location`，值为表格中的五个位置之一。
 - Apple Campaign：`Website`。
 - Apple Campaign Link：
@@ -37,7 +38,7 @@ https://apps.apple.com/app/apple-store/id6801961627?pt=129291985&ct=Website&mt=8
 
 1. 打开 Plausible 实时视图，再访问一次 `https://decrave.net/`，确认出现页面访问。
 2. 分别点击五个 App Store 按钮，确认出现 `App Store Click`，并可按 `button_location` 查看位置。
-3. 在 Plausible Settings → Goals 中添加名称完全一致的 `App Store Click` Custom event goal；未创建目标时事件虽会发送，但不会显示在 Dashboard。
+3. 确认 Plausible Dashboard 的 Goals 中有 `App Store Click`；已完成。
 4. 检查跳转后的 App Store URL 仍包含 `pt=129291985`、`ct=Website` 和 `mt=8`。
 5. Apple Campaign 数据通常不会实时出现，应在 App Store Connect 中稍后复查，并注意低于隐私门槛的指标可能不显示。
 
