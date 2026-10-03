@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#0c1725">
+  <title>Try one minute of SOS · Decrave</title>
+  <meta name="description" content="Try a free one-minute craving exercise with Decrave. No account or quit date required. Pause or finish at any time.">
+  <link rel="canonical" href="https://decrave.net/sos/">
+  <link rel="icon" type="image/svg+xml" href="../favicon.svg">
+  <link rel="stylesheet" href="styles.css">
+  <script src="sos.js" defer></script>
+  <script async src="https://plausible.io/js/pa-WHM7khDtIObvgc7hB4y4A.js"></script>
+  <script>
+    window.plausible = window.plausible || function () {
+      (plausible.q = plausible.q || []).push(arguments);
+    };
+    plausible.init = plausible.init || function (options) { plausible.o = options || {}; };
+    plausible.init();
+  </script>
+</head>
+<body>
+  <a class="skip" href="#main">Skip to exercise</a>
+  <header class="header">
+    <a class="brand" href="https://decrave.net/" aria-label="Decrave home"><span class="mark" aria-hidden="true">≈</span> Decrave</a>
+    <span class="preview-label">One-minute SOS</span>
+  </header>
+  <main id="main" tabindex="-1">
+    <section class="card" id="intro" aria-labelledby="intro-title">
+      <p class="eyebrow">One craving. One next step.</p>
+      <h1 id="intro-title">A moment<br>with the urge.</h1>
+      <p class="lede">Try one minute of noticing a craving before choosing what to do next.</p>
+      <div class="wave" aria-hidden="true"><svg viewBox="0 0 480 110"><path d="M0 65 C60 65 60 25 120 25 S180 85 240 85 S300 25 360 25 S420 65 480 65"/><path d="M0 80 C60 80 60 40 120 40 S180 100 240 100 S300 40 360 40 S420 80 480 80"/></svg></div>
+      <p class="quiet">The craving does not have to disappear. You can pause or finish at any time.</p>
+      <button class="primary" id="start" type="button" hidden>Try one minute <span aria-hidden="true">→</span></button>
+      <noscript><p>This interactive exercise needs JavaScript. You can still <a href="https://decrave.net/guides/what-to-do-when-cigarette-craving-hits.html">read the free craving guide</a>.</p></noscript>
+      <p class="small">Free · No account · Nothing to fill in</p>
+      <a class="text-link" href="https://decrave.net/guides/what-to-do-when-cigarette-craving-hits.html">Prefer to read? Open the craving guide</a>
+    </section>
+
+    <section class="card session" id="session" aria-labelledby="session-title" hidden>
+      <div class="session-top"><p class="eyebrow" id="step">Step 1 of 4</p><span class="time" role="timer" aria-live="off" aria-label="Time remaining"><span id="remaining">1:00</span> <span class="small">left</span></span></div>
+      <div id="guidance" aria-live="polite" aria-atomic="true">
+        <h2 id="session-title" tabindex="-1">Notice the urge.</h2>
+        <p class="lede" id="prompt">You do not have to act on it right now. Just notice that it is here.</p>
+      </div>
+      <div class="wave" aria-hidden="true"><svg viewBox="0 0 480 110"><path d="M0 65 C60 65 60 25 120 25 S180 85 240 85 S300 25 360 25 S420 65 480 65"/><path d="M0 80 C60 80 60 40 120 40 S180 100 240 100 S300 40 360 40 S420 80 480 80"/></svg></div>
+      <progress id="progress" max="60" value="0" aria-label="Exercise progress"></progress>
+      <p class="quiet status" id="status" role="status">Let your breathing stay comfortable. Follow the words at your own pace.</p>
+      <div class="actions"><button class="secondary" id="pause" type="button">Pause</button><button class="text-button" id="finish" type="button">Finish now</button></div>
+    </section>
+
+    <section class="card" id="summary" aria-labelledby="summary-title" hidden>
+      <p class="eyebrow" id="summary-label">A moment to choose</p>
+      <h2 id="summary-title" tabindex="-1">What would help next?</h2>
+      <p class="lede">The craving may still be here. Choose a manageable next action, or reach out for more support.</p>
+      <ul class="next-steps"><li>Move away from a familiar smoking cue.</li><li>Drink some water or take a short walk.</li><li>Contact someone who can support you.</li></ul>
+      <div class="app-note"><h3>Keep SOS nearby on your iPhone.</h3><p>Decrave includes free SOS tools and craving logging. This is a shortened exercise; the app offers more tools and keeps your own history.</p><a class="primary" href="https://apps.apple.com/app/apple-store/id6801961627?pt=129291985&amp;ct=Website&amp;mt=8">Explore Decrave on the App Store <span aria-hidden="true">↗</span></a><p class="small">iOS 17+ · No Decrave account required · Pro optional</p></div>
+      <div class="actions"><button class="secondary" id="again" type="button">Try another minute</button><a class="text-link" href="https://decrave.net/guides/what-to-do-when-cigarette-craving-hits.html">Read more options</a></div>
+    </section>
+    <p class="privacy">We do not save a personal exercise history or ask for smoking details. Anonymous page and button counts help us improve this experience. <a href="https://decrave.net/privacy-policy.html">Privacy policy</a></p>
+  </main>
+  <footer><a href="https://decrave.net/">Back to Decrave</a><p>If you need help with cravings or quitting, a quitline or qualified professional can discuss support options with you.</p></footer>
+</body>
+</html>

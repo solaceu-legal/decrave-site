@@ -266,6 +266,23 @@ img { max-width: 100%; display: block; }
   color: var(--text-dim);
 }
 
+.hero-sos {
+  margin-top: 18px;
+}
+
+.hero-sos p {
+  margin: 8px 0 10px;
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.hero-guide {
+  color: var(--sky);
+  font-size: 14px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 .hero-assurances {
   display: flex;
   flex-wrap: wrap;
