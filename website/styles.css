@@ -266,6 +266,43 @@ img { max-width: 100%; display: block; }
   color: var(--text-dim);
 }
 
+.hero-assurances {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  padding: 0;
+  margin: 20px 0 12px;
+  list-style: none;
+  color: var(--text);
+  font-size: 14px;
+}
+
+.hero-assurances li::before {
+  content: "✓";
+  color: var(--mint);
+  margin-right: 7px;
+}
+
+.hero-privacy {
+  max-width: 38em;
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.hero-privacy a,
+.hero-note a,
+.faq .body a,
+.article-aside p a,
+.article-meta a {
+  color: var(--sky);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Keep linked section headings visible below the sticky navigation. */
+[id] { scroll-margin-top: 92px; }
+
 /* ---------- Editorial guides ---------- */
 .guide-feature {
   padding-top: 0;
@@ -708,10 +745,14 @@ img { max-width: 100%; display: block; }
   transform: translateZ(0);
 }
 
-/* All six v1.1 captures share one optimized sprite to keep the homepage
-   sharp without making visitors download six full-resolution PNGs. */
+/* The gallery shares one optimized sprite. The hero uses a separate,
+   high-priority image so it can render before the gallery finishes. */
 .iphone .app-screen {
   background-image: url("assets/screens-v11.png");
+  background-image: image-set(
+    url("assets/screens-v11.webp") type("image/webp"),
+    url("assets/screens-v11.png") type("image/png")
+  );
   background-repeat: no-repeat;
   background-size: 300% 200%;
 }
@@ -1264,6 +1305,8 @@ details.faq .body {
   .hero-cta { text-align: center; }
   .hero .lede, .hero .quiet { margin-left: auto; margin-right: auto; }
   .hero-actions { justify-content: center; }
+  .hero-assurances { justify-content: center; }
+  .hero-privacy { margin-left: auto; margin-right: auto; }
   .release-band .wrap { grid-template-columns: 1fr; text-align: center; }
   .release-intro { align-items: center; }
   .release-points { grid-template-columns: repeat(2, 1fr); }

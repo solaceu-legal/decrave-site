@@ -91,15 +91,21 @@
             <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12.152 6.896c-.948 0-2.415-1.078-3.96-1.04-2.04.027-3.91 1.183-4.961 3.014-2.117 3.675-.546 9.103 1.519 12.09 1.013 1.454 2.208 3.09 3.792 3.039 1.52-.065 2.09-.987 3.935-.987 1.831 0 2.35.987 3.96.948 1.637-.026 2.676-1.48 3.676-2.948 1.156-1.688 1.636-3.325 1.662-3.415-.039-.013-3.182-1.221-3.22-4.857-.026-3.04 2.48-4.494 2.597-4.559-1.429-2.09-3.623-2.324-4.39-2.376-2-.156-3.675 1.09-4.61 1.09zM15.53 3.83c.843-1.012 1.4-2.427 1.245-3.83-1.207.052-2.662.805-3.532 1.818-.78.896-1.454 2.338-1.273 3.714 1.338.104 2.715-.688 3.559-1.701"/></svg>
             <span class="txt"><small>Download on the</small><strong>App Store</strong></span>
           </a>
-          <a class="btn btn-ghost" href="#how">See how it works</a>
+          <a class="btn btn-ghost" href="guides/what-to-do-when-cigarette-craving-hits.html" data-analytics-event="guide_open" data-analytics-location="hero">Read a free craving guide</a>
         </div>
-        <p class="hero-note">Built for the part before and between quit attempts.</p>
+        <ul class="hero-assurances" aria-label="Getting started">
+          <li>Free SOS tools</li>
+          <li>No account required</li>
+          <li>For iPhone · iOS 17+</li>
+        </ul>
+        <p class="hero-privacy">Your craving logs stay on your devices and, when available, in your private iCloud database. Anonymous app analytics are optional. <a href="privacy-policy.html">Read our privacy policy</a>.</p>
+        <p class="hero-note"><a href="#how">See how it works</a> · Core tools are free. Pro is an optional upgrade.</p>
       </div>
 
       <div class="mock">
-        <div class="iphone" aria-hidden="true">
+        <div class="iphone">
           <span class="btn-stub"></span>
-          <div class="screen app-screen screen-home" role="img" aria-label="Decrave 1.1 home screen showing money saved, cravings beaten, Momentum, body recovery, and the central SOS button"></div>
+          <div class="screen"><img src="assets/screenshot-home-v11.webp" width="603" height="1311" fetchpriority="high" alt="Decrave home screen with cravings beaten, personal progress, and the central SOS button"></div>
         </div>
       </div>
     </div>
@@ -142,15 +148,15 @@
   <section class="section">
     <div class="wrap">
       <div class="section-head">
-        <p class="eyebrow">Not another day counter</p>
-        <h2>Streaks punish a slip. Decrave doesn't.</h2>
-        <p>Most quit apps ask when you quit and count the days since. One slip and the counter drops to zero — right when you need it most.</p>
+        <p class="eyebrow">Progress you can keep</p>
+        <h2>Your earlier wins still count.</h2>
+        <p>A day count describes time since you stopped. Decrave also keeps a cumulative count of the cravings you got through without smoking, so those moments stay visible after a slip.</p>
       </div>
       <div class="split">
         <div class="panel bad">
-          <span class="tag">The old way</span>
-          <h3>Day 1, Day 2, Day 0.</h3>
-          <p>Streak counters only move in one direction: down on a slip. When a bad day becomes "back to Day 0," staying quit starts to feel pointless — so people quit the app instead of the cigarettes.</p>
+          <span class="tag">A streak</span>
+          <h3>Time since the last cigarette.</h3>
+          <p>A fresh day count can mark a new attempt. It does not, on its own, show the cravings you got through or the responses you practiced before that attempt.</p>
         </div>
         <div class="panel good">
           <span class="tag">The Decrave way</span>
@@ -347,6 +353,20 @@
     </div>
   </section>
 
+  <section class="section" id="why-decrave" aria-labelledby="why-title">
+    <div class="wrap">
+      <div class="guide-card">
+        <div>
+          <p class="eyebrow">Why Decrave</p>
+          <h2 id="why-title">A place to begin while you're still smoking.</h2>
+          <p>Decrave is built around a simple idea: you can practice responding to a craving before you are ready to choose a quit date. Keeping earlier wins visible makes room to learn from the next moment, including one that doesn't go to plan.</p>
+          <p>That is a product design choice, not a promise of a particular quitting outcome. Our guides explain practical options and link to public health resources for further support.</p>
+        </div>
+        <a class="btn btn-ghost" href="support.html#about-decrave">About Decrave &amp; our guides</a>
+      </div>
+    </div>
+  </section>
+
   <!-- Pricing -->
   <section class="section" id="pricing">
     <div class="wrap">
@@ -359,7 +379,7 @@
       <div class="pricing-wrap">
         <div class="plan plan-free">
           <h3>Forever free</h3>
-          <p class="plan-desc">The core loop, no time limit, no card.</p>
+          <p class="plan-desc">The core tools, no time limit or subscription required.</p>
           <div class="plan-price">
             <span class="amount">$0</span>
             <span class="per">forever</span>
@@ -376,32 +396,32 @@
         </div>
 
         <div class="plan plan-pro">
-          <span class="plan-badge">Most popular</span>
+          <span class="plan-badge">Optional upgrade</span>
           <h3>Decrave Pro</h3>
           <p class="plan-desc">The whole picture behind your own patterns.</p>
 
-          <div class="billing" role="tablist" aria-label="Billing period">
-            <button type="button" class="billing-item" data-period="monthly" role="tab">
+          <div class="billing" role="group" aria-label="Pro purchase options">
+            <button type="button" class="billing-item" data-period="monthly" aria-pressed="false">
               <span class="bp-label">Monthly</span>
               <span class="bp-price">$5.99</span>
             </button>
-            <button type="button" class="billing-item active" data-period="yearly" role="tab" aria-selected="true">
+            <button type="button" class="billing-item active" data-period="yearly" aria-pressed="true">
               <span class="bp-badge">Save 58%</span>
               <span class="bp-label">Yearly</span>
               <span class="bp-price">$29.99</span>
             </button>
-            <button type="button" class="billing-item" data-period="lifetime" role="tab">
+            <button type="button" class="billing-item" data-period="lifetime" aria-pressed="false">
               <span class="bp-label">Lifetime</span>
               <span class="bp-price">$59.99</span>
             </button>
           </div>
 
-          <div class="pro-summary">
+          <div class="pro-summary" aria-live="polite" aria-atomic="true">
             <div class="pro-price">
               <span class="amount" id="pro-amount">$29.99</span>
               <span class="per" id="pro-per">/ year</span>
             </div>
-            <p class="pro-note" id="pro-note">7-day free trial · then $29.99/year</p>
+            <p class="pro-note" id="pro-note">Billed yearly · check trial availability in the app</p>
           </div>
 
           <ul class="plan-list">
@@ -411,8 +431,8 @@
             <li>Full CSV export</li>
           </ul>
 
-          <a class="btn btn-primary btn-block" id="pro-cta" href="https://apps.apple.com/app/apple-store/id6801961627?pt=129291985&amp;ct=Website&amp;mt=8" data-analytics-event="app_store_click" data-analytics-location="pricing_pro">Start 7-day free trial</a>
-          <p class="plan-fine">Billed and managed through the App Store.</p>
+          <a class="btn btn-primary btn-block" id="pro-cta" href="https://apps.apple.com/app/apple-store/id6801961627?pt=129291985&amp;ct=Website&amp;mt=8" data-analytics-event="app_store_click" data-analytics-location="pricing_pro">Download to explore Pro</a>
+          <p class="plan-fine">Choose Pro in the app after downloading. Trial offers are shown for eligible users; Apple confirms the price and any renewal terms before purchase.</p>
         </div>
       </div>
       <p class="pricing-region">Prices shown are for the U.S. App Store. Local pricing may vary by region.</p>
@@ -425,7 +445,7 @@
       <div class="quote-band">
         <blockquote>
           <p>"The craving may still be here.</p>
-          <p class="muted">That's okay — it's not supposed to disappear.</p>
+          <p class="muted">You can still choose your next step.</p>
           <p>You just practiced having it without smoking."</p>
         </blockquote>
       </div>
@@ -465,6 +485,10 @@
           <div class="body">Subscriptions are billed and managed entirely through Apple, not us. On your iPhone, go to Settings → [your name] → Subscriptions → Decrave, and you can view, change, or cancel from there.</div>
         </details>
         <details class="faq">
+          <summary>Where are my craving logs stored?</summary>
+          <div class="body">On your devices and, when available, in your private iCloud database. No Decrave account is required. Anonymous app analytics are off until you choose to enable them, and you can turn them off in settings. Our website uses aggregate analytics. <a href="privacy-policy.html">Read the privacy policy</a> for details and your data choices.</div>
+        </details>
+        <details class="faq">
           <summary>Does Decrave replace professional support?</summary>
           <div class="body">No. Decrave is a wellness and habit-tracking tool. It does not provide health advice or replace support from a qualified professional. If you have questions about nicotine dependence or cessation, talk to a doctor or a licensed program.</div>
         </details>
@@ -502,6 +526,7 @@
           <li><a href="#features">Features</a></li>
           <li><a href="#pricing">Pricing</a></li>
           <li><a href="#faq">FAQ</a></li>
+          <li><a href="support.html#about-decrave">About Decrave &amp; our guides</a></li>
           <li><a href="guides/quit-smoking-without-a-quit-date.html">Quit-date guide</a></li>
           <li><a href="guides/what-to-do-when-cigarette-craving-hits.html">Craving guide</a></li>
           <li><a href="guides/smoking-slip-doesnt-erase-progress.html">Progress after a slip</a></li>
@@ -534,25 +559,24 @@
     var wrap = document.querySelector('.billing');
     if (!wrap) return;
     var data = {
-      monthly:  { amount: '$5.99',  per: '/ month', note: 'Billed monthly · cancel anytime', cta: 'Choose Monthly' },
-      yearly:   { amount: '$29.99', per: '/ year',  note: '7-day free trial · then $29.99/year', cta: 'Start 7-day free trial' },
-      lifetime: { amount: '$59.99', per: 'one-time', note: 'Pay once · Pro forever', cta: 'Get Lifetime' }
+      monthly:  { amount: '$5.99',  per: '/ month', note: 'Billed monthly · cancel anytime' },
+      yearly:   { amount: '$29.99', per: '/ year',  note: 'Billed yearly · check trial availability in the app' },
+      lifetime: { amount: '$59.99', per: 'one-time', note: 'Pay once · Pro forever' }
     };
     wrap.addEventListener('click', function (e) {
       var btn = e.target.closest('.billing-item');
       if (!btn) return;
       wrap.querySelectorAll('.billing-item').forEach(function (b) {
         b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
+        b.setAttribute('aria-pressed', 'false');
       });
       btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
+      btn.setAttribute('aria-pressed', 'true');
       var d = data[btn.getAttribute('data-period')];
       if (!d) return;
       document.getElementById('pro-amount').textContent = d.amount;
       document.getElementById('pro-per').textContent = d.per;
       document.getElementById('pro-note').textContent = d.note;
-      document.getElementById('pro-cta').textContent = d.cta;
     });
   })();
 </script>
@@ -564,6 +588,13 @@
           props: {
             button_location: link.getAttribute('data-analytics-location')
           }
+        });
+      });
+    });
+    document.querySelectorAll('[data-analytics-event="guide_open"]').forEach(function (link) {
+      link.addEventListener('click', function () {
+        plausible('Guide Open', {
+          props: { button_location: link.getAttribute('data-analytics-location') }
         });
       });
     });
