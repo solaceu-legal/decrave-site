@@ -12,7 +12,7 @@
   let state = 'idle', elapsed = 0, startedAt = 0, interval = null, stage = -1;
   function track(name, props) {
     // Analytics must never interrupt the exercise, including when blocked.
-    try { if (typeof window.plausible === 'function') window.plausible(name, props ? { props } : undefined); } catch (_) {}
+    try { if (window.DecraveAnalytics) window.DecraveAnalytics.track(name, props); } catch (_) {}
   }
   function stopTicker() { clearInterval(interval); interval = null; }
   function activeTime() { return Math.min(length, elapsed + (state === 'running' ? performance.now() - startedAt : 0)); }

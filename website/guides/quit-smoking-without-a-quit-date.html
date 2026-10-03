@@ -60,17 +60,8 @@
   ]
 }
 </script>
-<!-- Privacy-friendly analytics by Plausible -->
-<script async src="https://plausible.io/js/pa-WHM7khDtIObvgc7hB4y4A.js"></script>
-<script>
-  window.plausible = window.plausible || function () {
-    (plausible.q = plausible.q || []).push(arguments);
-  };
-  plausible.init = plausible.init || function (options) {
-    plausible.o = options || {};
-  };
-  plausible.init();
-</script>
+<script async id="umami-tracker" src="https://cloud.umami.is/script.js" data-website-id="f8cd9c76-858b-4053-8be4-e98849ac16b0" data-domains="decrave.net,www.decrave.net" data-exclude-hash="true"></script>
+<script src="/analytics.js" defer></script>
 </head>
 <body>
 
@@ -211,18 +202,5 @@
   </div>
 </footer>
 
-<script>
-  (function () {
-    document.querySelectorAll('[data-analytics-event="app_store_click"]').forEach(function (link) {
-      link.addEventListener('click', function () {
-        plausible('App Store Click', {
-          props: {
-            button_location: link.getAttribute('data-analytics-location')
-          }
-        });
-      });
-    });
-  })();
-</script>
 </body>
 </html>
