@@ -22,7 +22,7 @@
 ## 当前接入状态
 
 - Plausible 站点脚本：已接入首页。
-- 自定义事件：`App Store Click`；新增 `Guide Open`（首页免费烟瘾指南入口，代码待发布）。
+- 自定义事件：`App Store Click`；新增 `Guide Open`（首页免费烟瘾指南入口，已于 2026-10-03 22:04 发布）。
 - Plausible 自定义转化目标：原有 `App Store Click` 保留；2026-10-03 已创建并确认 `Guide Open`。
 - 自定义属性：`button_location`。2026-10-03 已登记到 Plausible 的 Custom properties；此前代码已发送，但设置列表为空。值包括上述五个下载位置、已有指南下载位置；`Guide Open` 的值为 `hero`。
 - 新事件只传递按钮位置，不传递个人烟瘾、诱因、记录内容或邮箱。
@@ -40,7 +40,7 @@ https://apps.apple.com/app/apple-store/id6801961627?pt=129291985&ct=Website&mt=8
 
 1. 打开 Plausible 实时视图，再访问一次 `https://decrave.net/`，确认出现页面访问。
 2. 分别点击五个 App Store 按钮，确认出现 `App Store Click`，并可按 `button_location` 查看位置。
-3. 点击首屏的 “Read a free craving guide”，确认导航到烟瘾指南，并出现 `Guide Open` / `button_location=hero`。两个目标和属性登记已完成；新入口的线上事件需发布后验证。
+3. 点击首屏的 “Read a free craving guide”，确认导航到烟瘾指南，并出现 `Guide Open` / `button_location=hero`。两个目标和属性登记已完成，22:05 起人工验收的指南跳转正常；本次后台检查暂未显示新事件，回传仍待确认，不能认为已经验收通过。
 4. 检查跳转后的 App Store URL 仍包含 `pt=129291985`、`ct=Website` 和 `mt=8`。
 5. Apple Campaign 数据通常不会实时出现，应在 App Store Connect 中稍后复查，并注意低于隐私门槛的指标可能不显示。
 6. 记录每次人工验证的时间和入口；只做少量必要点击，避免把自己的验证当作真实增长。本轮本地自动检查阻断外部统计请求，没有生成线上测试点击。
