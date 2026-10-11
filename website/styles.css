@@ -260,6 +260,8 @@ img { max-width: 100%; display: block; }
   gap: 14px;
 }
 
+.hero-actions > .btn { min-height: 56px; }
+
 .hero-note {
   margin-top: 22px;
   font-size: 13.5px;
@@ -267,7 +269,7 @@ img { max-width: 100%; display: block; }
 }
 
 .hero-sos {
-  margin-top: 18px;
+  margin-top: 12px;
 }
 
 .hero-sos p {
