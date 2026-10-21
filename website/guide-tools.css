@@ -1,0 +1,31 @@
+.guide-plan { margin:40px 0; padding:28px; border:1px solid rgba(59,232,176,.3); border-radius:20px; background:rgba(59,232,176,.045); scroll-margin-top:100px; }
+#decrave-example { scroll-margin-top:100px; }
+.article-content .guide-plan h2 { margin:0 0 16px; font-size:clamp(25px,3vw,31px); }
+.guide-plan .plan-template { padding:16px; border-left:3px solid var(--mint); background:var(--card); border-radius:0 10px 10px 0; }
+.guide-plan label { display:block; color:var(--text); font-weight:600; margin:20px 0 8px; }
+.guide-plan input,.guide-plan textarea { display:block; width:100%; min-width:0; box-sizing:border-box; padding:13px 14px; border:1px solid var(--stroke); border-radius:10px; background:var(--bg); color:var(--text); font:inherit; line-height:1.5; }
+.guide-plan input::placeholder { color:var(--text-dim); opacity:1; }
+.guide-plan input:focus-visible,.guide-plan textarea:focus-visible,.guide-plan button:focus-visible { outline:3px solid var(--sky); outline-offset:3px; }
+.guide-plan textarea { resize:vertical; min-height:250px; }
+.guide-plan .plan-actions { display:flex; flex-wrap:wrap; gap:12px; margin:20px 0 10px; }
+.guide-plan button { font:inherit; cursor:pointer; padding:12px 18px; min-height:48px; line-height:1.4; }
+.guide-plan .plan-clear { color:var(--text-secondary); border:1px solid var(--stroke); border-radius:12px; background:transparent; }
+.guide-plan .plan-note,.guide-plan .plan-status { font-size:14px; line-height:1.6; }
+.guide-plan .plan-status { min-height:1.6em; color:var(--mint); }
+.guide-plan [hidden] { display:none !important; }
+.guide-example { margin:28px 0; padding:20px 24px; border-left:3px solid var(--sky); background:rgba(82,197,255,.05); border-radius:0 14px 14px 0; }
+.article-content .guide-example h3 { margin-top:0; }
+.guide-product { display:flex; align-items:center; gap:28px; margin:32px 0; padding:24px; border:1px solid var(--stroke); border-radius:20px; background:var(--card); }
+.guide-screen { flex:0 0 200px; width:200px; aspect-ratio:437 / 951; border-radius:20px; background-image:url('/assets/screens-v11.webp'); background-repeat:no-repeat; background-size:300% 200%; }
+.guide-screen-sos { background-position:50% 0; }
+.guide-screen-home { background-position:0 0; }
+.guide-screen-progress { background-position:0 100%; }
+.guide-product figcaption { min-width:0; font-size:15px; color:var(--text-secondary); }
+.guide-product figcaption p:first-child { color:var(--text); font-weight:600; }
+.guide-product .screen-note { font-size:12px; color:var(--text-dim); }
+@media(max-width:600px) {
+  .guide-plan { padding:22px 18px; }
+  .guide-product { flex-direction:column; align-items:center; padding:24px 20px; }
+  .guide-screen { flex-basis:auto; width:min(220px,100%); }
+  .guide-plan .plan-actions button { flex:1 1 auto; }
+}

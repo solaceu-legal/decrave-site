@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>What to Do When a Cigarette Craving Hits | Decrave</title>
-<meta name="description" content="Want a cigarette right now? Choose a practical response to the craving, plan for familiar triggers, and find support without expecting a timer to fix it.">
+<meta name="description" content="Want a cigarette right now? Choose a practical next step, write your own craving plan, and try a free one-minute exercise. No app or account required.">
 <meta name="apple-itunes-app" content="app-id=6801961627, app-argument=https://decrave.net/guides/what-to-do-when-cigarette-craving-hits.html">
 <meta property="og:title" content="What to Do When a Cigarette Craving Hits">
 <meta property="og:description" content="Choose a practical response to a cigarette craving, plan for familiar triggers, and find further support.">
@@ -24,6 +24,8 @@
 <link rel="icon" type="image/svg+xml" href="../favicon.svg">
 <link rel="apple-touch-icon" href="../assets/app-icon.png">
 <link rel="stylesheet" href="../styles.css">
+<link rel="stylesheet" href="/guide-tools.css?v=20261021-1">
+<script src="/guide-tools.js?v=20261021-1" defer></script>
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -31,7 +33,7 @@
   "headline": "What to Do When a Cigarette Craving Hits",
   "description": "Want a cigarette right now? Choose a practical response to the craving, plan for familiar triggers, and find support without expecting a timer to fix it.",
   "datePublished": "2026-09-27",
-  "dateModified": "2026-10-03",
+  "dateModified": "2026-10-21",
   "mainEntityOfPage": "https://decrave.net/guides/what-to-do-when-cigarette-craving-hits.html",
   "author": {
     "@type": "Organization",
@@ -94,8 +96,8 @@
       <p class="article-deck">The aim is not to force the craving to disappear. It is to create enough space to choose what you do next, then keep what the moment teaches you.</p>
       <div class="article-meta">
         <span>By <a href="../support.html#about-decrave" rel="author">Decrave</a></span>
-        <span>Updated <time datetime="2026-10-03">October 3, 2026</time></span>
-        <span>6-minute read</span>
+        <span>Updated <time datetime="2026-10-21">October 21, 2026</time></span>
+        <span>8-minute read</span>
       </div>
     </div>
   </header>
@@ -114,6 +116,8 @@
             <li><a href="#understand-the-urge">Understand the urge</a></li>
             <li><a href="#responses">Six practical responses</a></li>
             <li><a href="#trigger-plan">Make a plan for the next trigger</a></li>
+            <li><a href="#your-plan">Write your next-craving plan</a></li>
+            <li><a href="#decrave-example">See an SOS example</a></li>
             <li><a href="#more-support">When to add more support</a></li>
             <li><a href="#sources">Sources and further support</a></li>
           </ul>
@@ -162,6 +166,35 @@
         </div>
         <p>Make the response specific to your own day. Our <a href="how-to-identify-smoking-triggers.html">guide to identifying smoking triggers</a> can help you choose a situation to start with.</p>
 
+        <div class="guide-example">
+          <h3>When a walk is not practical</h3>
+          <p>Suppose the urge comes during a meeting. “Go for a walk” may not be available. A smaller plan could be to sip water, keep your attention on the discussion, and take a different break when the meeting ends. Choose a response that fits the place you are actually in.</p>
+          <p>If a smoking break with colleagues is the cue, prepare the words as well as the action: “I’m taking a different break today.” These are examples to adapt, not accounts of user outcomes.</p>
+        </div>
+
+        <section class="guide-plan" id="your-plan" aria-labelledby="plan-title">
+          <h2 id="plan-title">Write your next-craving plan</h2>
+          <p>Choose one situation and an action you can actually take there. Keep a short support option ready too.</p>
+          <p class="plan-template">When I notice ___, my next action is ___. Support I can use: ___.</p>
+          <div data-plan-builder="craving" hidden>
+            <label for="plan-1">The situation I want to plan for</label>
+            <input id="plan-1" data-plan-field type="text" maxlength="160" autocomplete="off" placeholder="e.g. After coffee at work">
+            <label for="plan-2">One next action I can take</label>
+            <input id="plan-2" data-plan-field type="text" maxlength="160" autocomplete="off" placeholder="e.g. Take my break in a different place">
+            <label for="plan-3">Support I can use</label>
+            <input id="plan-3" data-plan-field type="text" maxlength="160" autocomplete="off" placeholder="e.g. A supportive friend or a quitline">
+            <div class="plan-actions"><button class="btn btn-primary" type="button" data-plan-build>Build my plan</button><button class="plan-clear" type="button" data-plan-clear>Clear entries</button></div>
+            <p class="plan-note">Your entries stay in this page and are not saved or sent to Decrave. Copy your plan to keep it; reloading the page clears it.</p>
+            <p class="plan-status" data-plan-status role="status" aria-live="polite"></p>
+            <div data-plan-result hidden>
+              <label for="plan-output">Your plan</label>
+              <textarea id="plan-output" data-plan-output rows="8" readonly></textarea>
+              <div class="plan-actions"><button class="btn btn-ghost" type="button" data-plan-copy>Copy plan</button></div>
+            </div>
+          </div>
+          <noscript><p>Use the sentence above as a template in your own notes. The interactive builder needs JavaScript; the guide and written template work without it.</p></noscript>
+        </section>
+
         <h2>If you smoke anyway</h2>
         <p>Log the moment without erasing everything that came before it. What triggered the craving? Was your planned response available? Did the situation need more support than you had prepared?</p>
         <p>The answer is information for the next similar moment. Your earlier progress still happened, and the next craving is another opportunity to respond differently.</p>
@@ -171,12 +204,16 @@
         <p>If you are in the United States, 1-800-QUIT-NOW connects you with free quit-smoking support. Other countries offer local stop-smoking services through their public health systems.</p>
         <p>If you are wondering what else can happen when you stop smoking, read our guide to <a href="nicotine-withdrawal-symptoms-timeline.html">nicotine withdrawal symptoms and the timeline</a>.</p>
 
-        <h2>Use Decrave in the moment</h2>
+        <h2 id="decrave-example">Use Decrave in the moment</h2>
         <p>Decrave puts SOS in the center of the app and makes it available through supported widgets, Control Center, and App Shortcuts. You can name the trigger, choose an approach, and log the outcome. What you learn stays part of your progress, even after a slip. SOS and logging are free, and no Decrave account is required.</p>
         <p><a href="/#screenshots">See Decrave SOS and Progress</a>, or read how to <a href="quit-smoking-without-a-quit-date.html">start before choosing a quit date</a>.</p>
+        <figure class="guide-product">
+          <div class="guide-screen guide-screen-sos" role="img" aria-label="Decrave SOS screen with Coffee, Meal and Stress triggers, a suggested next move, and Urge surfing and Breathing options"></div>
+          <figcaption><p>From a cue to a next move.</p><p>Open SOS and choose a trigger if you know it. Pick one of the available approaches; after the moment, log what happened. Use your own history to decide what you want easier to reach next time.</p><p>Prefer the browser? <a href="/sos/" data-analytics-event="sos_open" data-analytics-location="craving_guide_example">Try the one-minute web exercise</a>.</p><p class="screen-note">Decrave 1.1 example screen. Displayed counts are sample data, not measured results for this guide.</p></figcaption>
+        </figure>
 
         <h2 id="sources">Sources and further support</h2>
-        <p>Source links and the craving-response advice above were checked on <time datetime="2026-10-03">October 3, 2026</time>. The example plan and product descriptions are written by Decrave. The linked organizations do not endorse the app. See <a href="../support.html#guide-standards">who publishes our guides and how to suggest a correction</a>.</p>
+        <p>Source links and the craving-response advice above were checked on <time datetime="2026-10-21">October 21, 2026</time>. The example plan and product descriptions are written by Decrave. The linked organizations do not endorse the app. See <a href="../support.html#guide-standards">who publishes our guides and how to suggest a correction</a>.</p>
         <ul class="source-list">
           <li><a href="https://www.cancer.gov/about-cancer/causes-prevention/risk/tobacco/withdrawal-fact-sheet" rel="noopener noreferrer">National Cancer Institute: Nicotine Withdrawal and Triggers</a></li>
           <li><a href="https://smokefree.gov/challenges-when-quitting/cravings-triggers/know-your-triggers" rel="noopener noreferrer">Smokefree.gov: Know Your Smoking Triggers</a></li>
